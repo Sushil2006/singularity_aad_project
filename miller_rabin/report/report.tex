@@ -139,7 +139,7 @@ Let \(M(n)\) denote the cost of one modular multiplication on \(\Theta(\log n)\)
 
 \section{Algorithms Implemented (C++)}
 \begin{itemize}
-    \item \textbf{Trial Division (TD)} (\texttt{is\_prime\_td}): odd divisors up to \(\lfloor\sqrt{n}\rfloor\); disabled for bits \(>32\).
+    \item \textbf{Trial Division (TD)} (\texttt{is\_prime\_td}): odd divisors up to \(\lfloor\sqrt{n}\rfloor\); disabled for bits \(>48\).
     \item \textbf{Fermat-\(k\)} (\texttt{is\_probable\_prime\_fermat}): \(k\) random bases; rejects on any violation of \(a^{n-1}\equiv 1\).
     \item \textbf{MR-\(k\)} (\texttt{is\_probable\_prime\_mr}): \(k\) random bases with the standard strong probable prime check; per-round error \(\le 1/4\), total \(\le 4^{-k}\).
     \item \textbf{MR-det-64} (\texttt{is\_prime\_mr\_det64}): fixed 12 bases; exact for \(n < 2^{64}\).
