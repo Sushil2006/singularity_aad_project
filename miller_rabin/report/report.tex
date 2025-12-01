@@ -1,0 +1,221 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{siunitx}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{microtype}
+\usepackage{float}
+\usepackage{amsthm}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+
+\sisetup{round-mode=places,round-precision=2}
+\setlist{noitemsep}
+\graphicspath{{../results/plots/}}
+
+\title{Miller--Rabin Primality Testing: Analysis and Benchmarks}
+\author{Course Project}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We present a rigorous analysis of the Miller--Rabin (MR) primality test, its error bounds, and time complexity, alongside benchmarks comparing trial division, Fermat, randomized MR with \(k\) bases, and deterministic MR for 64-bit integers. Experiments span multiple input distributions (random odd, Carmichael, small-factor composites, primes), and we include a toy RSA demo built on the same MR implementation.
+\end{abstract}
+
+\section{Problem Setting and Model}
+We seek to decide primality of an integer \(n \ge 2\). The analysis is stated in the uniform RAM model with unit-cost operations on \(\Theta(\log n)\)-bit words. No implementation details appear in this section; they are deferred to later benchmarking notes.
+
+\section{Miller--Rabin Algorithm and Proofs}
+
+\subsection{Preprocessing for odd inputs}
+For every odd \(n>2\), factor
+\[
+n-1 = 2^s \cdot d,\qquad d\ \text{odd},\ s\ge 1.
+\]
+The pair \((s,d)\) is computed once and reused across all bases.
+
+\subsection{One Miller--Rabin round}
+Let \(n>2\) be odd and \(a\) satisfy \(2 \le a \le n-2\) and \(\gcd(a,n)=1\).
+\begin{enumerate}
+    \item Compute \(x = a^d \bmod n\) by repeated squaring.
+    \item If \(x \in \{1, n-1\}\), accept the round.
+    \item Otherwise, for \(r=1,\dots,s-1\):
+    \begin{enumerate}
+        \item Set \(x \leftarrow x^2 \bmod n\).
+        \item If \(x = n-1\), accept; if \(x = 1\), reject (non-trivial square root of 1).
+    \end{enumerate}
+    \item If no acceptance occurs, reject.
+\end{enumerate}
+
+\subsection{Correctness on prime inputs}
+Assume \(n\) is prime. The multiplicative group \(G = (\mathbb{Z}/n\mathbb{Z})^\times\) has order \(|G| = n-1 = 2^s d\).
+
+\begin{lemma}[Square roots of unity]
+If \(x^2 \equiv 1 \pmod n\), then \(x \equiv \pm 1 \pmod n\).
+\end{lemma}
+\begin{proof}
+We have \(n \mid (x-1)(x+1)\). Since \(n\) is prime, one factor vanishes modulo \(n\).
+\end{proof}
+
+\begin{lemma}[Allowed trajectory]
+Let \(x = a^d \in G\). Then \(x^{2^s} = a^{n-1} \equiv 1\). In the sequence \(x, x^2, x^{4}, \dots, x^{2^{s}}\), any transition from a value other than \(-1\) to 1 would create a non-trivial square root of 1, contradicting Lemma 1. Therefore the sequence must either start at 1 or hit \(-1\) exactly once before reaching 1.
+\end{lemma}
+\begin{proof}
+The equality \(x^{2^s}=1\) follows from Lagrange's theorem. Suppose some iterate \(x^{2^j}=1\) with \(0<j<s\) and \(x^{2^{j-1}} \not\equiv -1\). Then \(x^{2^{j-1}}\) is a non-trivial square root of 1, impossible by Lemma 1. Hence acceptance in a prime modulus always occurs along the Miller--Rabin path.
+\end{proof}
+
+\begin{theorem}[No false negatives]
+For prime \(n\) and any admissible base \(a\), one Miller--Rabin round accepts.
+\end{theorem}
+\begin{proof}
+Lemma 2 shows the round's control flow accepts exactly in the situations mandated by the group structure; no rejection is possible.
+\end{proof}
+
+\subsection{Error bound on composite inputs}
+Let \(n\) be odd and composite; write \(n-1 = 2^s d\) with \(d\) odd. Define a base \(a\) coprime to \(n\) as a \emph{strong liar} if the round accepts and as a \emph{strong witness} otherwise. We prove that at most a quarter of all admissible bases are liars, yielding the classical \( (1/4)^k \) error bound for \(k\) independent rounds.
+
+\paragraph{CRT decomposition.} Factor \(n = \prod_{i=1}^r p_i^{e_i}\). By the Chinese Remainder Theorem,
+\[
+(\mathbb{Z}/n\mathbb{Z})^\times \cong \prod_{i=1}^r G_i,\qquad G_i = \big(\mathbb{Z}/p_i^{e_i}\mathbb{Z}\big)^\times.
+\]
+Each \(G_i\) is cyclic of order \(p_i^{e_i-1}(p_i-1) = 2^{t_i} m_i\) with \(m_i\) odd and \(t_i \ge 1\). Choose generators \(g_i\) so every \(a\) corresponds to exponents \(u_i\) with \(0 \le u_i < 2^{t_i} m_i\).
+
+\paragraph{Component-wise acceptance.} Write \(u_i = 2^{\lambda_i} v_i\) with \(v_i\) odd and \(0 \le \lambda_i \le t_i\). The MR acceptance condition in component \(i\) is:
+\[
+\text{either } g_i^{u_i d} \equiv 1 \pmod{p_i^{e_i}} \quad\text{or}\quad g_i^{u_i 2^j d} \equiv -1 \text{ for some } j < t_i.
+\]
+Because \(d\) is odd, \(g_i^{u_i d} \equiv 1\) iff \(m_i \mid u_i\). Moreover, \(g_i^{u_i 2^j d} \equiv -1\) requires \(m_i \mid u_i\) and \(u_i / m_i \equiv 2^{t_i-1} \pmod{2^{t_i}}\), the unique exponent producing order 2 after the squaring ladder.
+
+\paragraph{Counting liars per component.} Acceptable \(u_i\) are exactly those with \(m_i \mid u_i\) and \(u_i \bmod 2^{t_i} \in \{0, 2^{t_i-1}\}\). The count is
+\[
+|L_i| = 2 \cdot \frac{2^{t_i} m_i}{2^{t_i}} = \frac{|G_i|}{2^{t_i-1}},
+\]
+so the liar fraction in component \(i\) is \(\rho_i = 2^{-(t_i-1)} \le \tfrac12\), with \(\rho_i \le \tfrac14\) whenever \(t_i \ge 3\).
+
+\paragraph{Global product bound.} Independence of the CRT components gives \(|L| = \prod_i |L_i|\) and
+\[
+\frac{|L|}{|G|} = \prod_{i=1}^r \rho_i = 2^{-\sum_i (t_i-1)}.
+\]
+For any odd composite \(n\), \(\sum_i (t_i-1) \ge 2\):
+\begin{itemize}
+    \item With at least two distinct prime factors (\(r \ge 2\)), two components each contribute a factor at most \(\tfrac12\), yielding \(|L|/|G| \le \tfrac14\).
+    \item For a prime power \(p^e\) with \(e \ge 2\), the 2-adic valuation of \(|G_1|\) satisfies \(t_1 \ge 2\), so \(\rho_1 \le \tfrac14\).
+\end{itemize}
+Thus \(|L| \le \tfrac14 |G|\). Random bases are chosen uniformly from admissible residues, so one round accepts a composite with probability at most \(\tfrac14\), and \(k\) independent rounds accept with probability at most \((1/4)^k\).
+
+\subsection{Deterministic base set for 64-bit inputs}
+The fixed bases \(\{2,3,5,7,11,13,17,19,23,29,31,37\}\) suffice for all odd \(n < 2^{64}\): passing MR for all of them implies primality. Therefore \texttt{is\_prime\_mr\_det64} is exact on 64-bit integers.
+
+\subsection{Time Complexity}
+Let \(M(n)\) denote the cost of one modular multiplication on \(\Theta(\log n)\)-bit words; in the RAM model \(M(n)=O(1)\).
+\begin{itemize}
+    \item Fast exponentiation of \(a^d \bmod n\) uses \(\lfloor \log_2 d \rfloor + \text{popcount}(d)\) multiplications, i.e., \(O(\log n)\).
+    \item One MR round consists of that exponentiation and up to \(s-1 \le \log_2(n-1)\) additional squarings, so \(O(\log n)\).
+    \item \(k\) rounds take \(O(k \log n)\) time and \(O(1)\) space.
+    \item Fermat-\(k\) matches these time bounds but lacks the \(4^{-k}\) error decay; trial division is \(O(\sqrt{n})\).
+\end{itemize}
+
+\subsection{Summary of Bounds}
+\begin{table}[H]
+    \centering
+    \begin{tabular}{lccc}
+        \toprule
+        Algorithm & Time & Error & Space \\
+        \midrule
+        Trial Division & \(O(\sqrt{n})\) & 0 & \(O(1)\) \\
+        Fermat-\(k\) & \(O(k\log n)\) & Can be 1 on Carmichael & \(O(1)\) \\
+        MR-\(k\) & \(O(k\log n)\) & \(\le (1/4)^k\) & \(O(1)\) \\
+        MR-det-64 & \(O(\log n)\) & 0 (for \(n<2^{64}\)) & \(O(1)\) \\
+        \bottomrule
+    \end{tabular}
+    \caption{Asymptotic behavior of implemented algorithms.}
+\end{table}
+
+\section{Algorithms Implemented (C++)}
+\begin{itemize}
+    \item \textbf{Trial Division (TD)} (\texttt{is\_prime\_td}): odd divisors up to \(\lfloor\sqrt{n}\rfloor\); disabled for bits \(>32\).
+    \item \textbf{Fermat-\(k\)} (\texttt{is\_probable\_prime\_fermat}): \(k\) random bases; rejects on any violation of \(a^{n-1}\equiv 1\).
+    \item \textbf{MR-\(k\)} (\texttt{is\_probable\_prime\_mr}): \(k\) random bases with the standard strong probable prime check; per-round error \(\le 1/4\), total \(\le 4^{-k}\).
+    \item \textbf{MR-det-64} (\texttt{is\_prime\_mr\_det64}): fixed 12 bases; exact for \(n < 2^{64}\).
+\end{itemize}
+
+\section{Benchmark Workflow}
+All benchmarks live in \texttt{src/main.cpp}; \texttt{scripts/run\_benchmarks.py} drives the binary \texttt{mr\_bench}.
+\begin{itemize}
+    \item \textbf{CLI}: \texttt{./mr\_bench <algo\_id> <dist\_id> <bits> <sample\_count> <rounds> <seed\_base> <reps>}.
+    \item \textbf{Distributions} (\texttt{dist\_id}): random odd, Carmichael, composite with small factor, primes (generated via MR-det-64).
+    \item \textbf{Metrics}: each repetition outputs \texttt{<time\_ns\_total> <error\_count>} across the sample of size \(S\), with truth labels provided by MR-det-64.
+    \item \textbf{Rounds}: Fermat/MR use \(k\) supplied on the CLI (e.g., \(k=10\)); TD ignores it.
+    \item \textbf{Python aggregation}: \texttt{results/raw\_results.csv} records all rows; plots are generated by \texttt{plot\_results.py}.
+\end{itemize}
+
+\section{Results}
+\subsection{Plots}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\linewidth]{carmichael_r10_time_error.png}
+    \caption{Carmichael distribution, \(k=10\): time per test (ns) and error rate.}
+    \label{fig:carmichael-r10}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\linewidth]{carmichael_bits48_rounds_bar.png}
+    \caption{Carmichael, 48 bits: error rate vs rounds for Fermat and MR.}
+    \label{fig:carmichael-bar}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\linewidth]{rand_odd_r10_time_error.png}
+    \caption{Random odd inputs, \(k=10\): time per test (ns) and error rate.}
+    \label{fig:rand-r10}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\linewidth]{primes_r10_time_error.png}
+    \caption{Prime inputs (ground truth), \(k=10\): time per test (ns) and false-negative rate.}
+    \label{fig:primes-r10}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\linewidth]{comp_small_factor_r10_time_error.png}
+    \caption{Composites with small factor, \(k=10\): time per test (ns) and error rate.}
+    \label{fig:comp-r10}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\linewidth]{comp_small_factor_r10000_time_error.png}
+    \caption{Composites with small factor, \(k=10000\): time per test (ns) and error rate.}
+    \label{fig:comp-r10000}
+\end{figure}
+
+\subsection{Observations}
+\begin{itemize}
+    \item \textbf{Carmichael sensitivity}: Figure~\ref{fig:carmichael-r10} shows MR attaining near-zero error on Carmichael inputs at \(k=10\); Figure~\ref{fig:carmichael-bar} highlights the exponential decay, with error essentially gone by \(k=5\).
+    \item \textbf{Random odd mix}: In Figure~\ref{fig:rand-r10}, Fermat and MR have similar runtimes; MR keeps error negligible, and Fermat's empirical error is extremely rare (about \(4\times 10^{-5}\)).
+    \item \textbf{Prime inputs}: Figure~\ref{fig:primes-r10} shows no false negatives for MR (as guaranteed); Fermat also very rarely rejects primes.
+    \item \textbf{Small-factor composites}: Figures~\ref{fig:comp-r10} and~\ref{fig:comp-r10000} demonstrate that MR's error vanishes quickly with \(k\); time scales linearly with \(k\), matching the \(O(k\log n)\) or \(O(k\log^2 n)\) bounds depending on the cost model.
+\end{itemize}
+
+\section{Real-world Usage}
+\begin{itemize}
+    \item \textbf{RSA key generation}: OpenSSL applies multiple MR rounds (and sieving) to candidate primes; documented error probabilities are bounded by powers of two. The toy RSA demo in this repository reuses the same MR code for small key generation.
+    \item \textbf{Big-integer libraries}: GMP, Java \texttt{BigInteger.isProbablePrime}, and similar libraries rely on MR (often combined with Lucas/Baillie-PSW) to deliver negligible error on large inputs.
+    \item \textbf{Computer algebra systems}: CAS tools (Maple, Mathematica, PARI/GP, SageMath) embed MR-style strong probable prime tests as core building blocks.
+    \item \textbf{Toy RSA implementation}: A pedagogical RSA demo (local CLI and simple client/server) is included; it generates small primes using the MR routines documented here and walks through textbook RSA key generation, encryption, and decryption for illustration.
+\end{itemize}
+
+\section{Conclusions}
+Miller--Rabin delivers logarithmic-time probabilistic primality testing with exponentially small error in the number of rounds. Deterministic base sets make it exact for 64-bit integers, and randomized MR dominates Fermat, especially on adversarial inputs like Carmichael numbers. Benchmarks confirm the theoretical bounds: time grows linearly with \(k\log n\), and empirical error aligns with the \((1/4)^k\) guarantee.
+
+\end{document}
