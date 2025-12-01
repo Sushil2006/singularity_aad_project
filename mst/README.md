@@ -7,7 +7,7 @@ This module benchmarks the Karger–Klein–Tarjan (KKT) randomized MST algorith
 From `mst/`:
 
 ```
-g++ -std=c++17 -O3 -march=native -DNDEBUG -o mst_bench src/main.cpp
+g++ -std=c++17 -O2 -o mst_bench src/main_new.cpp
 ```
 
 ## Binary usage
