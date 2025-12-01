@@ -1,0 +1,57 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath, amssymb}
+\usepackage{enumitem}
+\usepackage{hyperref}
+
+\title{\textbf{AAD Course Project -- Randomized Algorithms}\\[4pt]
+  \normalsize Team Singularity\\[2pt]
+  \normalsize Members: Adithya, Aryama, Sahid, Sushil, Yashas\\[2pt]
+  \normalsize Repository: \url{https://github.com/Sushil2006/singularity\_aad\_project/}\\[6pt]
+}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Randomness powers some of the fastest and most elegant algorithms known. In this project we study multiple randomized paradigms through formal proofs, code implementations, and benchmarks across wide-ranging test cases. We highlight when randomness beats deterministic lower bounds, how error can be driven exponentially low, and where these ideas solve real-world problems on real-world data. The goal is to motivate, implement, and empirically validate randomized algorithms with rigor and ambition.
+\end{abstract}
+
+\begin{itemize}[leftmargin=1.6em]
+  \item \textbf{Definition and model:} A randomized algorithm draws unbiased random bits to guide its internal choices. Runtime and output become random variables; guarantees are stated in expectation or with high probability.
+  \item \textbf{Why randomness helps:}
+    \begin{itemize}[leftmargin=1.2em]
+      \item \textbf{Break worst-case structure:} Random choices defeat adversarial input orders and pathological patterns.
+      \item \textbf{Simplicity with strong bounds:} Hashing, sampling, and randomized rounding often yield cleaner code and clean expected-time guarantees.
+      \item \textbf{Performance on real-world datasets:} Massive graphs, streams, and high-dimensional datasets---mirroring real-world data---admit fast randomized sketches and samplers where exact deterministic methods are infeasible.
+      \item \textbf{Provable speedups:} When deterministic lower bounds target worst case only, randomness can improve expected or smoothed complexity.
+    \end{itemize}
+  \item \textbf{Las Vegas vs.\ Monte Carlo:}
+    \begin{itemize}[leftmargin=1.2em]
+      \item \textbf{Las Vegas:} Always correct; randomness affects runtime (e.g., randomized QuickSort, randomized incremental constructions). Guarantee: exact output with expected (and often tail) bounds on time.
+      \item \textbf{Monte Carlo:} Fixed resource budget; output may err with small probability (one- or two-sided). Error is reduced exponentially by independent repetitions and majority/threshold rules (e.g., Miller--Rabin, randomized min-cut).
+    \end{itemize}
+  \item \textbf{Complexity classes for randomness:}
+    \begin{itemize}[leftmargin=1.2em]
+      \item \textbf{RP / coRP:} One-sided error; RP accepts yes-instances with probability at least $1/2$ and never accepts no-instances; coRP is the complement.
+      \item \textbf{BPP:} Two-sided error bounded away from $1/2$ (e.g., $1/3$); amplification drives error to $2^{-\Omega(k)}$ with $k$ repetitions.
+      \item \textbf{ZPP:} Zero-error (Las Vegas) with expected polynomial time; $\mathrm{ZPP} = \mathrm{RP} \cap \mathrm{coRP}$.
+      \item \textbf{PP / BQP:} PP allows majority acceptance with unbounded two-sided error; BQP is the quantum analogue of BPP with bounded two-sided error on a quantum computer.
+      \item \textbf{Other classes:} $\mathrm{MA}$ and $\mathrm{AM}$ capture randomized proof systems; $\mathrm{RL}$ vs.\ $\mathrm{L}$ address randomized logspace. These formalize how randomness affects power under time/space constraints.
+    \end{itemize}
+  \item \textbf{Error management and amplification:}
+    \begin{itemize}[leftmargin=1.2em]
+      \item \textbf{Independent repetition:} Re-run and aggregate outputs (e.g., majority) to exponentially reduce failure probability.
+      \item \textbf{Confidence vs.\ cost:} Amplification trades a multiplicative work factor for exponentially smaller error, enabling user-chosen confidence.
+    \end{itemize}
+  \item \textbf{Takeaways:}
+    \begin{itemize}[leftmargin=1.2em]
+      \item \textbf{Power of randomness:} Simplifies algorithms, thwarts worst-case inputs, and yields strong expected or with-high-probability guarantees.
+      \item \textbf{Formal lenses:} Las Vegas vs.\ Monte Carlo and classes (RP, BPP, ZPP, BQP, etc.) formalize correctness and resource trade-offs.
+      \item \textbf{Tunable confidence:} Amplification converts modest per-run guarantees into very high confidence with predictable cost.
+    \end{itemize}
+\end{itemize}
+
+\end{document}

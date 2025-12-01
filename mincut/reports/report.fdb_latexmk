@@ -1,12 +1,12 @@
 # Fdb version 4
-["pdflatex"] 1764616741.32329 "/home/sushil/aad/mincut/reports/report.tex" "report.pdf" "report" 1764616742.32967 0
+["pdflatex"] 1764618878.67726 "/home/sushil/aad/mincut/reports/report.tex" "report.pdf" "report" 1764618879.626 0
   "../results/plots/adversarial_barbell_time_mse.png" 1764614871.4191 119950 4e617ee25e58c977a90490444714965c ""
   "../results/plots/cubic_regular_time_mse.png" 1764614871.69906 136448 00931ca5b688e0fa2532eefbd6dbdba2 ""
   "../results/plots/gnp_dense_time_mse.png" 1764614871.13915 119887 059c09e0316e165b86d540513b206cf9 ""
   "../results/plots/gnp_sparse_time_mse.png" 1764614870.85791 118445 3984b9ad32e5e1860a9cfb87a4d1013e ""
   "../results/plots/two_cluster_gnp_time_mse.png" 1764614870.5591 118542 98bc14187f5baa15ecacc3b939c2cedc ""
   "/etc/texmf/web2c/texmf.cnf" 1756414792.10083 475 c0e671620eb5563b2130f56340a5fde8 ""
-  "/home/sushil/aad/mincut/reports/report.tex" 1764616715.35111 9736 67198de6aa8ba9f56d067103ad218eae ""
+  "/home/sushil/aad/mincut/reports/report.tex" 1764618877.88344 9736 67198de6aa8ba9f56d067103ad218eae ""
   "/usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/jknappen/ec/tcrm1095.tfm" 1136768653 1536 02c06700a42be0f5a28664c7273f82e7 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm" 1246382020 1004 54797486969f23fa377b128694d548df ""
@@ -78,8 +78,8 @@
   "/usr/share/texmf/web2c/texmf.cnf" 1707919699 40399 f2c302f7d2af602abb742093540a5834 ""
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1756414823.90354 5472669 54eaf61a88b6b7896ebd0dac973cb29c ""
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1756414937 8213946 b6d6a139f873706a84071dcfc471cbed ""
-  "report.aux" 1764616742.28485 2709 08d3864bb33c4382c2d432223f570478 "pdflatex"
-  "report.tex" 1764616715.35111 9736 67198de6aa8ba9f56d067103ad218eae ""
+  "report.aux" 1764618879.58357 2709 08d3864bb33c4382c2d432223f570478 "pdflatex"
+  "report.tex" 1764618877.88344 9736 67198de6aa8ba9f56d067103ad218eae ""
   (generated)
   "report.aux"
   "report.log"

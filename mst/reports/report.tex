@@ -1,0 +1,145 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{float}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newcommand{\E}{\mathbb{E}}
+
+\title{Karger--Klein--Tarjan vs.\ Kruskal for Minimum Spanning Trees}
+\author{Implementation and Benchmark Report}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section{Problem and Model}
+Given a connected, undirected, weighted graph $G=(V,E,w)$ with $|V|=n$, $|E|=m$, the task is to output a minimum spanning tree (MST). We work in the comparison-based RAM model with unit-cost edge-weight comparisons.
+
+\section{Algorithms (structured description)}
+\paragraph{Karger--Klein--Tarjan (KKT), expected $O(m+n)$.}
+\begin{enumerate}[leftmargin=1.4em]
+  \item \textbf{Base case.} If $n\le n_0$ or $m\le m_0$, return Kruskal's MST.
+  \item \textbf{Two Bor\r{u}vka rounds.} For each current supervertex, pick its lightest incident edge, add it to the partial MST, and contract all chosen edges (delete self-loops; keep only the lightest among parallel edges). After two rounds, the vertex count drops by a constant factor. Let $C$ be the set of chosen edges and $G_1=(V_1,E_1)$ the contracted graph.
+  \item \textbf{Sampling.} Independently include each edge of $E_1$ with probability $p=\tfrac12$ to obtain subgraph $H$.
+  \item \textbf{Sample MSF.} Compute an MSF (Minimum Spanning Forest) $F$ of $H$ (we use Bor\r{u}vka inside the recursion).
+  \item \textbf{$F$-heavy filtering.} An edge $e=(u,v)$ is $F$-heavy if $w(e)$ exceeds the maximum edge weight on the unique $F$-path between $u$ and $v$ (or $+\infty$ if they are disconnected). Using a linear-time MST verifier (Bor\r{u}vka tree plus $O(n)$ Farach--Colton--Bender LCA with parent/max ladders), mark all $F$-heavy edges and delete them to get $G_2=(V_1,E_2)$ of $F$-light edges.
+  \item \textbf{Recurse and combine.} Recursively compute an MSF $T_{G_2}$ of $G_2$. Output $C\cup T_{G_2}$, expanding contractions to original vertices.
+\end{enumerate}
+Kruskal + union--find serves as the deterministic baseline and correctness oracle for KKT.
+
+\paragraph{Kruskal + union--find, $O(m\log m)$.} Sort edges by weight; scan and add an edge iff it connects different DSU components. Complexity is dominated by sorting.
+
+\section{Foundational Properties}
+\begin{lemma}[Cut property]\label{lem:cut}
+For any nonempty proper $S\subset V$, every minimum-weight edge crossing the cut $(S,V\setminus S)$ belongs to every MST of $G$.
+\end{lemma}
+\begin{proof}
+Fix such an $S$ and let $e$ be a minimum-weight cut edge. Any spanning tree $T$ must contain some edge $f$ crossing this cut. Consider replacing $f$ by $e$ in $T$. Connectivity is preserved because both cross $(S,V\setminus S)$. If $w(e)<w(f)$, the replacement yields a strictly lighter spanning tree, contradicting the minimality of any MST omitting $e$. If $w(e)=w(f)$, the replacement preserves minimal weight but still shows $e$ can appear in some MST. Therefore every MST contains $e$.
+\end{proof}
+
+\begin{lemma}[Bor\r{u}vka edges]\label{lem:boruvka}
+Every edge chosen in a Bor\r{u}vka round lies in every MST of the current graph; contracting them preserves the set of MSTs.
+\end{lemma}
+\begin{proof}
+Each chosen edge is the minimum across a singleton cut $\big(\{v\},V\setminus\{v\}\big)$, so Lemma~\ref{lem:cut} forces its inclusion in every MST. Contracting such mandatory edges merges endpoints already guaranteed to be connected in all MSTs, so MST structure on the contracted graph matches that of the original.
+\end{proof}
+
+\begin{lemma}[Cycle property via $F$-heaviness]\label{lem:fheavy}
+Let $F$ be an MSF of a subgraph. If $u$ and $v$ are connected in $F$ and an edge $e=(u,v)$ satisfies $w(e)>\max$ edge weight on the $F$-path between $u$ and $v$, then $e$ is absent from every MST of the current graph.
+\end{lemma}
+\begin{proof}
+Adding $e$ to $F$ creates a unique cycle. By construction, $e$ is the heaviest edge on that cycle. The cycle property of MSTs states that the heaviest edge on any cycle cannot appear in an MST, so $e$ is excluded from all MSTs.
+\end{proof}
+
+\section{Correctness of KKT}
+\begin{theorem}\label{thm:correct}
+KKT returns an MST of $G$.
+\end{theorem}
+\begin{proof}
+We prove the claim by induction on $n+m$.
+
+\paragraph{Base case.} If $n\le n_0$ or $m\le m_0$, the algorithm runs Kruskal, which is correct by standard arguments.
+
+\paragraph{Inductive step.} Assume correctness for smaller $n+m$. Run two Bor\r{u}vka rounds: by Lemma~\ref{lem:boruvka}, the set $C$ of selected edges must be in every MST, and contracting $C$ reduces the instance to $G_1=(V_1,E_1)$ without altering the MST family.
+
+Sampling forms $H$ and its MSF $F$. Apply Lemma~\ref{lem:fheavy}: delete every $F$-heavy edge of $G_1$ to obtain $G_2=(V_1,E_2)$. Because only edges forbidden by the cycle property are removed, the MST set of $G_2$ equals that of $G_1$.
+
+Invoke the inductive hypothesis on $G_2$: the recursive call returns an MSF $T_{G_2}$, which is therefore an MST of $G_1$. Finally, expand contractions and union $T_{G_2}$ with $C$. Since $C$ is mandatory and $T_{G_2}$ spans the contracted graph optimally, their union is an MST of the original graph $G$.
+\end{proof}
+
+\section{Expected Linear Time}
+\begin{lemma}[Sampling lemma]\label{lem:sampling}
+Sampling each edge independently with probability $p$ and letting $F$ be an MSF of the sample yields $\E[\#\text{$F$-light edges in $G$}] \le \tfrac{n}{p}$.
+\end{lemma}
+\begin{proof}
+Order edges of $G$ by nondecreasing weight and simulate Kruskal on the sample. For edge $e$, let $A_e$ be the event “$e$ is $F$-light when processed,” and let $X_e$ indicate “$e$ enters $F$.” If $A_e$ holds, $\Pr[X_e=1\mid A_e]=p$ (it is sampled and joins distinct components); otherwise $\Pr[X_e=1\mid A_e^c]=0$. Hence $\E[X_e]=p\Pr[A_e]$, and summing gives
+\[
+  p\sum_{e\in E}\Pr[A_e] \;=\; \sum_{e\in E}\E[X_e] \;=\; \E[|F|] \;\le\; n-1.
+\]
+Therefore $\sum_{e}\Pr[A_e]\le n/p$, which equals $\E[\#\text{$F$-light edges}]$.
+\end{proof}
+
+\begin{theorem}\label{thm:time}
+KKT runs in expected $O(m+n)$ time.
+\end{theorem}
+\begin{proof}
+Charge work to edges at each recursion node.
+\begin{itemize}[leftmargin=1.4em]
+  \item \textbf{Sampled children.} Each edge is included with probability $1/2$, so expected total sampled edges across all levels is $\sum_{i\ge0}(1/2)^i m \le 2m$.
+  \item \textbf{Filtered children.} The filtered graph contains only $F$-light edges. Lemma~\ref{lem:sampling} with $p=\tfrac12$ gives $\E[|E_2|]\le 2|V_1|$ at a node with $|V_1|$ vertices. Two Bor\r{u}vka rounds shrink $|V_1|$ by a factor of at least $4$, so the expected sum of filtered edges over all depths is a convergent geometric series $O(n)$.
+\end{itemize}
+Summing these disjoint edge streams, the expected total work is $\Theta(m+n)$.
+\end{proof}
+
+\section{Implementation and Benchmarks}
+\begin{itemize}[leftmargin=1.4em]
+  \item Binary: \texttt{mst\_bench} from \texttt{mst/src/main\_new.cpp} (\texttt{g++ -std=c++17 -O2}).
+  \item Config: $n\in\{2^{10},\dots,2^{17}\}$; $m\in\{2n,4n,8n,16n\}$; $3$ graphs $\times$ $3$ reps; deterministic seeds.
+  \item Verification: Bor\r{u}vka tree plus $O(n)$ Farach--Colton--Bender LCA and parent/max ladders to classify $F$-heavy edges.
+\end{itemize}
+
+\section{Figures and Discussion}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{../results/plots/time_vs_m_n131072.png}
+  \caption{Fixed $n=131072$: time per graph vs.\ $m$.}
+  \label{fig:n131072}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{../results/plots/time_vs_n_m2n.png}
+  \caption{Varying $n$ with density $m=2n$.}
+  \label{fig:m2n}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{../results/plots/time_vs_n_m16n.png}
+  \caption{Varying $n$ with density $m=16n$.}
+  \label{fig:m16n}
+\end{figure}
+
+\paragraph{Observations.}
+\begin{itemize}[leftmargin=1.4em]
+  \item \textbf{Scaling with $m$ (Fig.~\ref{fig:n131072}).} Kruskal grows roughly with $m$ (sort-dominated); doubling $m$ roughly doubles time. KKT is consistently slower and its gap widens as density rises.
+  \item \textbf{Scaling with $n$ at $m=2n$ (Fig.~\ref{fig:m2n}).} Kruskal’s curve is smooth with modest growth; KKT mirrors the shape but remains far slower, reflecting high constant factors despite linear expectation.
+  \item \textbf{Scaling with $n$ at $m=16n$ (Fig.~\ref{fig:m16n}).} Higher density amplifies the gap: KKT’s verification/contraction overheads dominate, while Kruskal continues to benefit from cache-friendly sort + DSU.
+  \item \textbf{Practical takeaway.} The theoretically near-linear KKT is ``galactic'' in practice because of heavy verification constants and memory traffic; optimized $O(m\log n)$ Kruskal remains the pragmatic choice.
+\end{itemize}
+
+\section{Applications of MST}
+\begin{itemize}[leftmargin=1.4em]
+  \item \textbf{Network design.} Cost-minimal communication, power, and transport backbones.
+  \item \textbf{Clustering.} Single-linkage hierarchies and density-based methods use MSTs to expose cluster structure.
+  \item \textbf{Vision.} Graph-based image segmentation (e.g., Felzenszwalb--Huttenlocher) partitions via MST cuts.
+  \item \textbf{VLSI/CAD.} Clock-tree and interconnect synthesis start from MST backbones before Steiner refinements.
+  \item \textbf{Computational biology.} Parsimonious phylogenetic backbones and scaffolding heuristics on distance graphs.
+\end{itemize}
+
+\end{document}

@@ -1,0 +1,134 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{microtype}
+
+\title{Color-Coding for $k$-Cycle Detection In Graphs}
+\author{}
+\date{}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+
+\begin{document}
+\maketitle
+
+\section{Problem and Model}
+\begin{itemize}
+    \item Task: detect a simple $k$-cycle ($k\ge3$) in an undirected simple graph $G=(V,E)$ under the RAM model with unit-cost $\Theta(\log n)$-bit operations.
+    \item Output: vertices $(v_0,\dots,v_{k-1})$ with $(v_i,v_{i+1})\in E$ for all $i$ (indices modulo $k$), all vertices distinct.
+    \item If none exists, the algorithm may report failure; color-coding is Monte Carlo with tunable failure probability, DFS is exact but exponential.
+\end{itemize}
+
+\section{Algorithms}
+We compare a randomized fixed-parameter color-coding algorithm against a deterministic DFS baseline.
+
+\subsection{Color-coding with subset DP}
+Each iteration colors every vertex independently and uniformly with one of $k$ colors. A $k$-cycle is \emph{colorful} if its vertices receive pairwise distinct colors.
+
+For a coloring, define DP states $\mathsf{DP}[S][v]=1$ when there exists a simple path ending at $v$ that uses exactly the color set $S\subseteq[k]$ (one occurrence per color). Initialization sets $\mathsf{DP}[\{c(v)\}][v]=1$ for all $v$. Transitions over increasing $|S|$ apply
+\[
+\mathsf{DP}[S\cup\{c(u)\}][u] \gets 1 \quad\text{if } \mathsf{DP}[S][v]=1,\ (v,u)\in E,\ c(u)\notin S.
+\]
+A colorful $k$-cycle exists if some state with $|S|=k$ closes an edge to its start vertex; parent pointers reconstruct the vertex sequence.
+
+\begin{lemma}[Correctness of one coloring]
+If a coloring makes some simple $k$-cycle colorful, the DP discovers it and returns a valid $k$-cycle.
+\end{lemma}
+\begin{proof}
+Proceed by induction on $|S|$. Initialization establishes all length-$1$ colorful paths. The transition preserves simplicity because a new color implies a previously unseen vertex; adjacency ensures a valid extension. Thus any colorful path of color set $S$ ending at $v$ sets $\mathsf{DP}[S][v]=1$. For a colorful $k$-cycle $(v_0,\dots,v_{k-1})$, the DP marks $\mathsf{DP}[\,[k]\,][v_{k-1}]=1$. Since $(v_{k-1},v_0)\in E$, the closing check reconstructs exactly the original cycle.\end{proof}
+
+\begin{lemma}[Single-coloring success probability]\label{lem:prob}
+For any fixed simple $k$-cycle, a random coloring makes it colorful with probability $p(k)=k!/k^k \ge e^{-k}$.
+\end{lemma}
+\begin{proof}
+All $k^k$ colorings are equally likely. The cycle is colorful under $k!$ injective colorings, hence probability $k!/k^k$. Stirling's bound $k! \ge (k/e)^k$ yields $k!/k^k \ge e^{-k}$.\end{proof}
+
+To reduce failure probability below $\delta$, we perform
+\[
+R(k)=\left\lceil \frac{\ln (1/\delta)}{p(k)}\right\rceil
+\]
+independent colorings.
+
+\begin{theorem}[Amplified success]
+With $R(k)$ colorings, the probability that a $k$-cycle present in $G$ is missed is at most $\delta$.
+\end{theorem}
+\begin{proof}
+Lemma~\ref{lem:prob} gives per-trial success probability at least $p(k)$. Independence yields failure probability $(1-p(k))^{R(k)} \le e^{-p(k)R(k)} \le e^{-\ln(1/\delta)}=\delta$.\end{proof}
+
+\paragraph{Complexity.} The DP has $O(2^k n)$ states and examines each incident edge per state, giving $O(2^k m)$ time and $O(2^k n)$ space per coloring. Total expected time is $O(R(k)\,2^k m)$.
+
+\subsection{Depth-limited DFS baseline}
+DFS enumerates simple paths of length $k-1$ from each start vertex, accepting when the final edge closes a $k$-cycle. Let $d$ be the average branching factor; worst-case time is $\Theta(n d^{k-1})$ and exponential in $k$.
+
+\begin{theorem}[DFS blow-up on the ladder]
+For the ladder distribution with width $b\ge2$, DFS starting at $s$ must enumerate $b^{k-1}$ distinct length-$(k-1)$ paths before encountering the unique closing edge, yielding time $\Omega(b^{k-1})$ even for a single start vertex.
+\end{theorem}
+\begin{proof}
+Every path from $s$ to $L_{k-1}$ chooses one vertex per layer, giving exactly $b^{k-1}$ simple paths of length $k-1$. Only one vertex in $L_{k-1}$ is adjacent to $s$. In adversarial adjacency ordering, that vertex is explored last, forcing DFS to traverse all other $b^{k-1}-1$ paths before closing the cycle. Each traversal costs $\Theta(k)$, so time is $\Omega(b^{k-1})$.\end{proof}
+
+\section{Adversarial Ladder Distribution}
+All experiments use a single synthetic family that maximally amplifies branching for DFS while guaranteeing a $k$-cycle:
+\begin{itemize}
+    \item Fix $k\ge3$ and total vertex count $n$. Set the layer width $b = \max\{1, \lfloor (n-1)/(k-1) \rfloor\}$.
+    \item Create layers $L_0,\dots,L_{k-1}$ with $|L_0|=1$ (start vertex $s$) and $|L_i|=b$ for $i\ge1$ (truncated to fit $n$ vertices).
+    \item Add all edges between $L_i$ and $L_{i+1}$, giving a complete bipartite join per consecutive layer.
+    \item Add a single closing edge from one vertex in $L_{k-1}$ back to $s$. This yields exactly one simple $k$-cycle but $b^{k-1}$ distinct simple paths of length $k-1$ from $s$ to $L_{k-1}$.
+\end{itemize}
+This construction ensures every instance contains a $k$-cycle while forcing DFS to enumerate exponentially many candidate paths before encountering the unique closing edge.
+
+\section{Experimental Setup}
+\begin{itemize}
+    \item \textbf{Algorithms evaluated:} color-coding with $R(k)=\lceil \ln(10)/p(k) \rceil$ (target failure $\delta=0.1$) and the DFS baseline above.
+    \item \textbf{Instances:} adversarial ladder only; parameters $k\in\{5,6,7\}$ and $n\in\{20,40,80,200,300,500\}$ with width $b=\lfloor (n-1)/(k-1) \rfloor$; exactly one $k$-cycle per graph.
+    \item \textbf{Metrics and timeouts:} $5$ repetitions of $20$ graphs each per configuration; time per graph derived from totals. Runs exceeding $20$ seconds are terminated and marked as timeouts (observed for DFS on larger ladders).
+\end{itemize}
+
+\section{Results}
+The figures below present mean time per graph versus $n$ for $k\in\{5,6,7\}$. Timeout markers (red crosses) indicate DFS exceeded the $20$ second cap for the largest ladders.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{../results/plots/time_vs_n_k5.png}
+    \caption{Runtime on ladder graphs for $k=5$.}
+    \label{fig:k5}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{../results/plots/time_vs_n_k6.png}
+    \caption{Runtime on ladder graphs for $k=6$.}
+    \label{fig:k6}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{../results/plots/time_vs_n_k7.png}
+    \caption{Runtime on ladder graphs for $k=7$.}
+    \label{fig:k7}
+\end{figure}
+
+\subsection{Observations}
+\begin{itemize}
+    \item \textbf{Color-coding scaling:} mean time per graph grows roughly linearly with $n$ at fixed $k\in\{5,6,7\}$, consistent with the $O(2^k m)$ dependence when $k$ is fixed.
+    \item \textbf{DFS divergence:} DFS matches color-coding for small $n$ but growth accelerates with $b^{k-1}$; at $k=7$ and $n=500$ it times out, consistent with Theorem~4.
+    \item \textbf{Stability and error risk:} no empirical errors occurred in simulations; in real deployments, errors remain possible due to adversarial ordering, implementation defects, or hardware nondeterminism.
+\end{itemize}
+
+\section{Use Cases and Risks}
+\begin{itemize}
+    \item \textbf{Motif discovery in biology:} short-cycle motifs in protein or gene interaction networks where $k$ is small and sparsity holds.
+    \item \textbf{Fraud-ring detection:} small cycles linking accounts in financial transaction graphs; color-coding tolerates moderate noise while keeping failure probability tunable.
+    \item \textbf{Routing sanity checks:} fixed-length loops in communication networks that indicate policy violations or misconfigurations.
+    \item \textbf{Algorithm suitability:} color-coding is preferable when $k$ is small and graphs are sparse-to-moderate; DFS is viable only when both $k$ and branching are tiny.
+    \item \textbf{Operational risk:} the adversarial ladder shows naive DFS can fail catastrophically in graphs with many simple paths even when a single cycle exists; color-coding still has Monte Carlo error that must be controlled via repetitions.
+\end{itemize}
+
+\section{Implementation Summary}
+We implemented both algorithms in C++17 (\texttt{kcycle\_bench}). The ladder generator, color-coding DP, DFS baseline, and validation are contained in \texttt{color\_coding/src/main.cpp}. The benchmark driver accepts an \texttt{algo\_id} and configuration tuple, generates ladder instances deterministically from seeds, times only the algorithm body, and enforces the $20$ second timeout. Plots are produced by \texttt{scripts/plot\_results.py} from \texttt{results/raw\_results.csv}.
+
+\end{document}

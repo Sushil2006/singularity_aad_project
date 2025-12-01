@@ -2,3 +2,4 @@ latex_test/
 client/
 server/
 agent_guidelines/
+.vscode

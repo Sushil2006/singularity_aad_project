@@ -192,6 +192,74 @@ Graph planted_cycle_noise(int n, int k, double p_noise, std::mt19937_64 &rng) {
 }
 
 /**
+ * Layered diamond ladder designed to explode DFS branching.
+ *
++ * Layout:
+ *  - Layer L0 = {s} (vertex 0).
+ *  - Layers L1..L_{k-1}, each of width b.
+ *  - Complete bipartite edges between L_i and L_{i+1}.
+ *  - Exactly one vertex in L_{k-1} connects back to s to close the single k-cycle.
+ *
+ * Width b is derived from n: b = floor((n - 1) / (k - 1)), floored to at least 1.
+ * Extra vertices (if any) remain isolated.
+ *
+ * @param n Total number of vertices.
+ * @param k Target cycle length.
+ * @return Generated graph instance.
+ */
+Graph layered_diamond_ladder(int n, int k) {
+    if (k < 3 || k > n) {
+        throw std::invalid_argument("k must satisfy 3 <= k <= n");
+    }
+    Graph g;
+    g.n = n;
+    g.adj.assign(n, {});
+    g.adj_set.assign(n, {});
+
+    auto add_edge = [&](int u, int v) {
+        if (u == v || g.adj_set[u].find(v) != g.adj_set[u].end()) {
+            return;
+        }
+        g.adj_set[u].insert(v);
+        g.adj_set[v].insert(u);
+        g.adj[u].push_back(v);
+        g.adj[v].push_back(u);
+    };
+
+    int width = std::max(1, (n - 1) / (k - 1));
+    std::vector<std::vector<int>> layers(k);
+    int next_id = 0;
+    layers[0].push_back(next_id++); // start vertex s = 0
+
+    for (int i = 1; i < k; ++i) {
+        for (int j = 0; j < width && next_id < n; ++j) {
+            layers[i].push_back(next_id++);
+        }
+        if (static_cast<int>(layers[i].size()) < width) {
+            // Not enough vertices to fill this layer; bail early.
+            width = static_cast<int>(layers[i].size());
+        }
+    }
+
+    // Complete bipartite connections between consecutive layers.
+    for (int i = 0; i + 1 < k; ++i) {
+        for (int u : layers[i]) {
+            for (int v : layers[i + 1]) {
+                add_edge(u, v);
+            }
+        }
+    }
+
+    // Close the unique k-cycle using the first vertex of the last layer.
+    if (!layers[k - 1].empty()) {
+        int closing_vertex = layers[k - 1][0];
+        add_edge(layers[0][0], closing_vertex); // Added last to place closing edge at end of adjacency.
+    }
+
+    return g;
+}
+
+/**
  * Verify that a candidate cycle is a simple cycle of length k in the graph.
  *
  * @param g Graph instance.
@@ -447,8 +515,8 @@ int main(int argc, char **argv) {
         std::cerr << "All integer arguments must be positive." << std::endl;
         return 1;
     }
-    if (p_noise < 0.0 || p_noise > 1.0) {
-        std::cerr << "p_noise must lie in [0,1]." << std::endl;
+    if (p_noise > 1.0) {
+        std::cerr << "p_noise must lie in [0,1] for planted_cycle_noise, or be negative to select the layered ladder." << std::endl;
         return 1;
     }
 
@@ -462,7 +530,12 @@ int main(int argc, char **argv) {
         int error_count = 0;
 
         for (int g_idx = 0; g_idx < graphs_per_rep; ++g_idx) {
-            Graph g = planted_cycle_noise(n, k, p_noise, rng);
+            Graph g;
+            if (p_noise < 0.0) {
+                g = layered_diamond_ladder(n, k);
+            } else {
+                g = planted_cycle_noise(n, k, p_noise, rng);
+            }
             Timer timer;
             timer.start();
             std::vector<int> cycle;

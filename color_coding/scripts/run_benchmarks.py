@@ -2,8 +2,10 @@
 Benchmark runner for randomized color-coding vs DFS k-cycle detection.
 
 This script drives the compiled `kcycle_bench` binary across configured
-algorithms, graph sizes, cycle lengths, and noise rates, persisting per-repetition
-runtime and error metrics into `color_coding/results/raw_results.csv`.
+algorithms, graph sizes, and cycle lengths. A negative `p_noise` selects the
+layered diamond ladder distribution; this runner is currently configured to
+exercise only that adversarial case. Each binary invocation is capped at
+`TIMEOUT_SECS` and marked as a timeout if exceeded.
 """
 
 from __future__ import annotations
@@ -19,12 +21,14 @@ ALGOS: Dict[str, int] = {
     "dfs_k_cycle": 1,
 }
 
-N_LIST: List[int] = [500]
-K_LIST: List[int] = [7]
-P_NOISE_LIST: List[float] = [0.5]
+N_LIST: List[int] = [20,40,80,200,300,500]
+K_LIST: List[int] = [5,6,7]
+# Sentinel p_noise = -1 selects the layered diamond ladder distribution.
+P_NOISE_LIST: List[float] = [-1.0]
 GRAPHS_PER_REP: int = 20
 REPS: int = 5
 SEED_BASE_GLOBAL: int = 12345
+TIMEOUT_SECS: int = 20
 
 
 def compute_seed_base(algo_id: int, n: int, k: int, p_noise: float) -> int:
@@ -52,7 +56,7 @@ def run_single_config(
     p_noise: float,
     graphs_per_rep: int,
     reps: int,
-) -> List[Tuple[int, int]]:
+) -> List[Tuple[int, int, int]]:
     """
     Execute the benchmark binary once for a configuration tuple.
 
@@ -66,7 +70,7 @@ def run_single_config(
         reps (int): Number of repetitions requested from the binary.
 
     Returns:
-        List[Tuple[int, int]]: (total_time_ns, error_count) pairs, one per repetition.
+        List[Tuple[int, int, int]]: (total_time_ns, error_count, timeout_flag) per repetition.
     """
     seed_base = compute_seed_base(algo_id, n, k, p_noise)
     cmd = [
@@ -79,20 +83,30 @@ def run_single_config(
         str(seed_base),
         str(reps),
     ]
-    completed = subprocess.run(cmd, capture_output=True, text=True, check=True)
-    lines = [line.strip() for line in completed.stdout.splitlines() if line.strip()]
-    if len(lines) != reps:
-        raise RuntimeError(f"Expected {reps} lines from benchmark, got {len(lines)}")
+    try:
+        completed = subprocess.run(
+            cmd,
+            capture_output=True,
+            text=True,
+            check=True,
+            timeout=TIMEOUT_SECS,
+        )
+        lines = [line.strip() for line in completed.stdout.splitlines() if line.strip()]
+        if len(lines) != reps:
+            raise RuntimeError(f"Expected {reps} lines from benchmark, got {len(lines)}")
 
-    results: List[Tuple[int, int]] = []
-    for line in lines:
-        parts = line.split()
-        if len(parts) != 2:
-            raise ValueError(f"Malformed output line: '{line}'")
-        total_time_ns = int(parts[0])
-        error_count = int(parts[1])
-        results.append((total_time_ns, error_count))
-    return results
+        results: List[Tuple[int, int, int]] = []
+        for line in lines:
+            parts = line.split()
+            if len(parts) != 2:
+                raise ValueError(f"Malformed output line: '{line}'")
+            total_time_ns = int(parts[0])
+            error_count = int(parts[1])
+            results.append((total_time_ns, error_count, 0))
+        return results
+    except subprocess.TimeoutExpired:
+        # Mark all reps as timed out; use sentinel -1 for timing/error fields.
+        return [(-1, -1, 1) for _ in range(reps)]
 
 
 def ensure_results_dir(results_path: Path) -> None:
@@ -121,6 +135,7 @@ def main() -> None:
         "p_noise",
         "graphs_per_rep",
         "rep",
+        "timeout",
         "total_time_ns",
         "error_count",
     ]
@@ -141,7 +156,8 @@ def main() -> None:
                             GRAPHS_PER_REP,
                             REPS,
                         )
-                        for rep_idx, (total_time_ns, error_count) in enumerate(results):
+                        any_timeout = any(t == 1 for _, _, t in results)
+                        for rep_idx, (total_time_ns, error_count, timeout_flag) in enumerate(results):
                             writer.writerow(
                                 {
                                     "algo": algo_name,
@@ -150,11 +166,13 @@ def main() -> None:
                                     "p_noise": p_noise,
                                     "graphs_per_rep": GRAPHS_PER_REP,
                                     "rep": rep_idx,
+                                    "timeout": timeout_flag,
                                     "total_time_ns": total_time_ns,
                                     "error_count": error_count,
                                 }
                             )
-                        print(f"Finished algo={algo_name} n={n} k={k} p_noise={p_noise}")
+                        status_note = " (timeout)" if any_timeout else ""
+                        print(f"Finished algo={algo_name} n={n} k={k} p_noise={p_noise}{status_note}")
 
     print(f"Wrote results to {output_path}")
 
