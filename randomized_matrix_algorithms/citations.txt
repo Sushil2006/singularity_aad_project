@@ -1,0 +1,23 @@
+Drineas, Kannan, Mahoney – “Fast Monte Carlo Algorithms for Matrices I: Approximating Matrix Multiplication” (SIAM J. Comput., 2006)
+This is the canonical RMM paper: outer-product sampling, unbiased estimator, variance formula, and importance sampling probabilities. 
+
+
+Ipsen & Wentworth – “Importance Sampling for a Monte Carlo Matrix Multiplication Algorithm, with Application to Information Retrieval” (SIAM J. Sci. Comput., 2011)
+
+
+Core RSVD paper
+
+Halko, Martinsson, Tropp – “Finding Structure with Randomness: Probabilistic Algorithms for Constructing Approximate Matrix Decompositions” (SIAM Review, 2011)
+
+
+Metere – “Low-Rank GEMM: Efficient Matrix Multiplication via Low-Rank Approximation with FP8 Acceleration” (arXiv:2511.18674, 2025)
+Shows how to use low-rank approximations and FP8 to accelerate GEMM on GPUs; reports substantial speedups vs standard matmul for low-rank-ish matrices.
+
+Hu et al. – “LoRA: Low-Rank Adaptation of Large Language Models” (2021)
+Introduces low-rank adapters; shows many transformer weight updates live in a very low-dimensional subspace. Perfect for justifying “neural network weight matrices are effectively low-rank.”
+
+Recommender systems
+
+Koren, Bell, Volinsky – “Matrix Factorization Techniques for Recommender Systems” (Computer, 2009)
+Famous Netflix paper: user–item rating matrix factorized into low-rank factors. This is your “real-world low-rank matrix” poster child outside deep learning. 
+OSTI
