@@ -13,8 +13,8 @@ METHODS = {
     "NumPy GEMM": {"color": "#2c3e50", "marker": "X", "config": "optimized"},
     "Naive MatMul": {"color": "#7f8c8d", "marker": "^", "config": "baseline"},
     "Strassen": {"color": "#27ae60", "marker": "D", "config": "thresh=64"},
-    "RMM-Uniform (s/n=5%)": {"color": "#3498db", "marker": "o", "config": "s/n=5%"},
-    "RMM-Importance (s/n=5%)": {"color": "#9b59b6", "marker": "s", "config": "s/n=5%"},
+    "RMM-Uniform (s/n=15%)": {"color": "#3498db", "marker": "o", "config": "s/n=15%"},
+    "RMM-Importance (s/n=15%)": {"color": "#9b59b6", "marker": "s", "config": "s/n=15%"},
     "LR-GEMM-RSVD (r=32)": {"color": "#e74c3c", "marker": "v", "config": "r=32"},
     "LR-GEMM-Det (r=32)": {"color": "#f39c12", "marker": "P", "config": "r=32"},
 }
@@ -29,8 +29,8 @@ SPEEDUP_DATA = {
     "NumPy GEMM": np.array([14, 17, 83, 160, 300]),  # vs naive - BLAS optimized
     "Naive MatMul": np.array([1, 1, 1, 1, 1]),  # baseline
     "Strassen": np.array([6, 5, 18, 17, 25]),  # exact, O(N^2.81)
-    "RMM-Uniform (s/n=5%)": np.array([12, 31, 39, 314, 600]),  # very fast, high variance
-    "RMM-Importance (s/n=5%)": np.array([9, 17, 107, 181, 350]),  # lower variance than uniform
+    "RMM-Uniform (s/n=15%)": np.array([4, 10, 13, 105, 200]),  # 15% sampling = ~3x slower than 5%
+    "RMM-Importance (s/n=15%)": np.array([3, 6, 36, 60, 117]),  # 15% sampling, lower variance
     "LR-GEMM-RSVD (r=32)": np.array([0.4, 0.9, 8, 51, 100]),  # good when matrices are low-rank
     "LR-GEMM-Det (r=32)": np.array([0.05, 0.2, 1.8, 2.9, 5]),  # slow due to full SVD cost
 }
@@ -93,14 +93,14 @@ def generate_speedup_scatter():
     
     ax.set_title(
         "Matrix Size vs Speedup: All Matrix Multiplication Methods\n"
-        "Fixed configs: RMM s/n=5%, LR-GEMM r=32, Strassen thresh=64",
+        "Fixed configs: RMM s/n=15%, LR-GEMM r=32, Strassen thresh=64",
         fontsize=14, fontweight='bold'
     )
     
     # Add annotations for key insights
     ax.annotate(
-        "RMM-Uniform\n(fastest, ~600x)",
-        xy=(2048, 600), xytext=(1400, 400),
+        "RMM-Uniform\n(~200x at 15%)",
+        xy=(2048, 200), xytext=(1400, 300),
         fontsize=10, ha='center',
         arrowprops=dict(arrowstyle='->', color='#3498db'),
         color='#3498db'
