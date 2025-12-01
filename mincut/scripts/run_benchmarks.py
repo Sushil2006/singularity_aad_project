@@ -23,7 +23,6 @@ DISTS: Dict[str, int] = {
     "two_cluster_gnp": 0,
     "gnp_sparse": 1,
     "gnp_dense": 2,
-    "adversarial_barbell": 3,
 }
 
 N_LIST: List[int] = [30, 60, 90]

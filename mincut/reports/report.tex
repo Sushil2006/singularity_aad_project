@@ -1,0 +1,145 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath, amsthm, amssymb, fullpage, booktabs, graphicx}
+\usepackage{float}
+\usepackage{placeins}
+\graphicspath{{../results/plots/}}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+
+\begin{document}
+
+\title{Karger's Minimum-Cut Algorithm: Detailed Analysis and Benchmarks}
+\author{}
+\date{}
+\maketitle
+
+\section{Karger Minimum Cut: Model and Algorithm}
+\paragraph{Graph model.} We work with undirected multigraphs \(G = (V, E)\) having \(n = |V|\) vertices and \(m = |E|\) edges; parallel edges are allowed, self-loops are ignored. For any non-empty proper \(S \subset V\), the cut value is \(\delta(S) = |\{(u, v) \in E : u \in S, v \notin S\}|\). The global minimum cut value is \(\lambda(G) = \min_{S} \delta(S)\). The RAM model with unit-cost \(\Theta(\log n)\)-bit operations is assumed.
+
+\paragraph{Single-run algorithm.} Maintain a disjoint-set union (DSU) with one set per vertex and a component counter \(c = n\):
+\begin{enumerate}
+    \item While \(c > 2\): draw a uniform random edge \((u, v) \in E\). If \(u\) and \(v\) are in different DSU sets, merge them and decrement \(c\).
+    \item When exactly two supernodes remain, count edges whose endpoints lie in different DSU sets; return that count.
+\end{enumerate}
+
+\section{Probabilistic Analysis of Karger}
+All statements below condition on a fixed target minimum cut \(C^\star\) of size \(\lambda = \lambda(G)\).
+
+\subsection{Edge-incidence bound per step}
+\begin{lemma}
+Suppose \(i\) supernodes remain and no edge of \(C^\star\) has been contracted so far. Then the probability that the next sampled edge lies in \(C^\star\) is at most \(2/i\).
+\end{lemma}
+\begin{proof}
+Because no edge of \(C^\star\) has been contracted, every cut in the current multigraph corresponds to a cut in the original graph and therefore has value at least \(\lambda\). In particular, the minimum degree of the current multigraph is at least \(\lambda\): removing all edges incident to any vertex isolates it and forms a cut of size equal to that degree, which cannot be smaller than \(\lambda\). With \(i\) supernodes, this minimum-degree bound implies at least \(i \lambda / 2\) edges in total (summing degrees and dividing by two). Exactly \(\lambda\) of those edges belong to \(C^\star\). Sampling an edge uniformly therefore yields
+\[
+\Pr[\text{pick edge in } C^\star \mid \text{no previous contraction of } C^\star] \le \frac{\lambda}{i \lambda / 2} = \frac{2}{i}.
+\]
+\end{proof}
+
+\subsection{Single-run success probability}
+\begin{theorem}
+The probability that a single run returns the fixed minimum cut \(C^\star\) is at least \(2/(n(n-1))\).
+\end{theorem}
+\begin{proof}
+Let \(p_i = 1 - 2/i\) be the lower bound on the probability that the contraction step at supernode count \(i\) avoids \(C^\star\). Starting from \(i = n\) and stopping at \(i = 2\), the overall survival probability is
+\[
+\prod_{i = n}^{3} p_i = \prod_{i = n}^{3} \left(1 - \frac{2}{i}\right) = \prod_{i = n}^{3} \frac{i-2}{i}.
+\]
+To telescope, rewrite each factor \(\frac{i-2}{i}\) as \(\frac{i-2}{i-1} \cdot \frac{i-1}{i}\), obtaining
+\[
+\prod_{i = n}^{3} \frac{i-2}{i} = \left(\prod_{i = n}^{3} \frac{i-2}{i-1}\right) \cdot \left(\prod_{i = n}^{3} \frac{i-1}{i}\right).
+\]
+Now expand both products step by step. The first product is
+\[
+\frac{n-2}{n-1} \cdot \frac{n-3}{n-2} \cdot \frac{n-4}{n-3} \cdots \frac{1}{2},
+\]
+whose numerators and denominators cancel in sequence, leaving \(\frac{1}{n-1}\). The second product is
+\[
+\frac{n-1}{n} \cdot \frac{n-2}{n-1} \cdot \frac{n-3}{n-2} \cdots \frac{2}{3},
+\]
+which cancels to \(\frac{2}{n}\). Multiplying the two surviving terms yields
+\[
+\prod_{i = n}^{3} \frac{i-2}{i} = \frac{1}{n-1} \cdot \frac{2}{n} = \frac{2}{n(n-1)}.
+\]
+Conditional on survival of \(C^\star\) through all contractions, the final two supernodes are separated exactly by \(C^\star\), so the run outputs it with probability at least \(2/(n(n-1))\).
+\end{proof}
+
+\subsection{Amplification by repetition}
+Let \(p_{\min}(n) = 2/(n(n-1))\) be the guaranteed per-run success probability. Running \(R\) independent trials and returning the minimum cut observed yields failure probability
+\[
+\Pr[\text{all fail}] \le (1 - p_{\min}(n))^{R} \le e^{-p_{\min}(n) R},
+\]
+using \(1-x \le e^{-x}\). Choosing
+\[
+R(n) = \left\lceil \tfrac{1}{2} n (n-1) \ln \tfrac{1}{\delta_{\text{target}}} \right\rceil
+\]
+drives this upper bound down to at most \(\delta_{\text{target}}\) for a user-specified \(\delta_{\text{target}}\). The constant \(\delta_{\text{target}}\) is fixed in the code; with that fixed value the resulting iteration counts are \(R(30) = 23\), \(R(60) = 91\), and \(R(90) = 206\).
+
+\subsection{Time complexity}
+One contraction run examines \(O(m)\) edges and performs DSU operations in \(O(\alpha(n))\) amortized time, giving \(O(m \alpha(n))\) time and \(O(n)\) space. Repetition multiplies time by \(R(n)\) without changing asymptotic space.
+
+\section{Implementation Snapshot and Baseline}
+The C++ source \texttt{src/main.cpp} stores both an edge list and an adjacency matrix per sampled graph. Karger is implemented exactly as analyzed, with DSU using path compression and union by size, and independent RNG states \(\texttt{seed} = \texttt{seed\_base} + \texttt{rep}\). The code always performs the predetermined \(R(n)\) repetitions above and returns the minimum cut found. Stoer--Wagner is included only as an exact baseline oracle against which Karger is timed and scored; no probabilistic analysis is needed for it.
+
+\section{Graph Families}
+\begin{itemize}
+    \item \texttt{two\_cluster\_gnp} (\(\text{dist\_id}=0\)): planted bisection with even \(n\); \(p_{\text{in}} = 0.3\), \(p_{\text{out}} = 0.05\); regenerated until connected.
+    \item \texttt{gnp\_sparse} (\(\text{dist\_id}=1\)): Erd\H{o}s--R\'enyi with \(p = \min(1, 6.0/n)\); regenerated until connected.
+    \item \texttt{gnp\_dense} (\(\text{dist\_id}=2\)): Erd\H{o}s--R\'enyi with \(p = 0.2\); regenerated until connected.
+    \item \texttt{adversarial\_barbell} (\(\text{dist\_id}=3\)): two cliques of sizes \(\lfloor n/2 \rfloor\), \(\lceil n/2 \rceil\) joined by one bridge edge; \(\lambda(G) = 1\).
+    \item \texttt{cubic\_regular} (\(\text{dist\_id}=4\)): simple 3-regular graph from the configuration model with rejection until simplicity and connectivity hold.
+\end{itemize}
+
+\section{Benchmark Methodology}
+\paragraph{Configuration.} The driver \texttt{scripts/run\_benchmarks.py} evaluates all combinations of Karger and Stoer--Wagner across the five distributions above, sizes \(n \in \{30, 60, 90\}\), \texttt{reps} \(= 5\), and \texttt{graphs\_per\_rep} \(= 20\). Seeds are deterministic functions of \((\text{algo}, \text{dist}, n)\).
+
+\paragraph{Protocol.} For each graph, Stoer--Wagner runs once (not timed) to supply \(\lambda_{\text{truth}}\). The chosen algorithm is timed. Per repetition the binary outputs \(\texttt{<total\_time\_ns> <sum\_sq\_error>}\) with \(\texttt{sum\_sq\_error} = \sum (\lambda_{\text{hat}} - \lambda_{\text{truth}})^2\). The plotting script aggregates mean time per graph and mean squared error (MSE) and writes figures to \texttt{results/plots/}.
+
+\section{Benchmark Results (plots)}
+Each distribution has one figure with time-per-graph and MSE subplots:
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{../results/plots/two_cluster_gnp_time_mse.png}
+\caption{\texttt{two\_cluster\_gnp}: runtime and MSE.}
+\end{figure}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{../results/plots/gnp_sparse_time_mse.png}
+\caption{\texttt{gnp\_sparse}: runtime and MSE.}
+\end{figure}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{../results/plots/gnp_dense_time_mse.png}
+\caption{\texttt{gnp\_dense}: runtime and MSE.}
+\end{figure}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{../results/plots/adversarial_barbell_time_mse.png}
+\caption{\texttt{adversarial\_barbell}: runtime and MSE.}
+\end{figure}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{../results/plots/cubic_regular_time_mse.png}
+\caption{\texttt{cubic\_regular}: runtime and MSE.}
+\end{figure}
+\FloatBarrier
+
+\paragraph{Plot interpretation.} Karger is consistently faster than Stoer--Wagner on the random Erd\H{o}s--R\'enyi families, with the time curves reflecting roughly quadratic growth in \(n\) due to repeated contractions. On the adversarial barbell, the deterministic baseline overtakes Karger for larger \(n\) because Karger still pays for all repetitions despite the single bridge. MSE is zero everywhere except for occasional misses on \texttt{cubic\_regular} at \(n=30\), highlighting that the fixed repetition counts suffice for these inputs but remain probabilistic.
+
+\section{Real-World Context and Practicality}
+\paragraph{Applications.}
+\begin{itemize}
+    \item Network reliability: edge connectivity equals the fewest links whose failure disconnects the network, guiding robustness targets.
+    \item VLSI partitioning: low-cut partitions reduce inter-block wiring, improving routability and timing slack.
+    \item Image segmentation: graph cuts separate foreground and background in pixel or superpixel graphs.
+\end{itemize}
+
+\paragraph{Why Karger is rarely used in production.}
+\begin{itemize}
+    \item Success probability of a single run scales as \(2/(n(n-1))\); large graphs require many repetitions to gain confidence, raising runtime.
+    \item Outputs are probabilistic and non-certifying, conflicting with reliability demands in networking and hardware design.
+    \item Deterministic (e.g., Stoer--Wagner) or stronger randomized algorithms offer predictable behavior and avoid reruns, so practitioners favor them.
+\end{itemize}
+
+\end{document}

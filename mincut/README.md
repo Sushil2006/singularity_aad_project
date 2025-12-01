@@ -20,6 +20,7 @@ Graph generators (all regenerate until connected):
 - `dist_id = 1` (`gnp_sparse`): Erdos-Renyi with `p = min(1, c / n)`, `c = 6.0`.
 - `dist_id = 2` (`gnp_dense`): Erdos-Renyi with `p = 0.2`.
 - `dist_id = 3` (`adversarial_barbell`): two cliques of sizes `⌊n/2⌋` and `⌈n/2⌉` joined by a single bridge edge (unique min-cut = 1).
+- `dist_id = 4` (`cubic_regular`): simple 3-regular graph sampled via the configuration model (requires even `n`).
 
 ## Benchmark binary usage
 
@@ -37,7 +38,7 @@ Per repetition, the program prints one line:
 
 Defaults in `scripts/run_benchmarks.py`:
 - `algos = ["Karger", "StoerWagner"]`
-- `dists = ["two_cluster_gnp", "gnp_sparse", "gnp_dense", "adversarial_barbell"]`
+- `dists = ["two_cluster_gnp", "gnp_sparse", "gnp_dense", "adversarial_barbell", "cubic_regular"]`
 - `n_list = [30, 60, 90]`
 - `graphs_per_rep = 20`
 - `reps = 5`

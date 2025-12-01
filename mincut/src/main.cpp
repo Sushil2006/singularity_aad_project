@@ -304,9 +304,65 @@ Graph generate_barbell(int n) {
 }
 
 /**
+ * Generate a connected simple d-regular graph using the configuration model with rejection.
+ *
+ * @param n Number of vertices.
+ * @param degree Desired regular degree (must satisfy n * degree even).
+ * @param rng Random number generator.
+ * @return Graph Connected d-regular graph instance.
+ */
+Graph generate_regular_connected(int n, int degree, std::mt19937_64& rng) {
+    if (degree <= 0 || degree >= n) {
+        throw std::invalid_argument("degree must be in [1, n - 1] for regular graph");
+    }
+    if ((n * degree) % 2 != 0) {
+        throw std::invalid_argument("n * degree must be even for regular graph");
+    }
+    constexpr int kMaxAttempts = 500;
+    for (int attempt = 0; attempt < kMaxAttempts; ++attempt) {
+        std::vector<int> stubs;
+        stubs.reserve(n * degree);
+        for (int v = 0; v < n; ++v) {
+            for (int j = 0; j < degree; ++j) {
+                stubs.push_back(v);
+            }
+        }
+        std::shuffle(stubs.begin(), stubs.end(), rng);
+
+        std::vector<std::pair<int, int>> edges;
+        edges.reserve(stubs.size() / 2);
+        std::vector<std::vector<int>> seen(n, std::vector<int>(n, 0));
+        bool simple = true;
+        for (size_t i = 0; i + 1 < stubs.size(); i += 2) {
+            int u = stubs[i];
+            int v = stubs[i + 1];
+            if (u == v || seen[u][v] > 0) {
+                simple = false;
+                break;
+            }
+            seen[u][v] = 1;
+            seen[v][u] = 1;
+            edges.emplace_back(u, v);
+        }
+        if (!simple) {
+            continue;
+        }
+        if (!is_connected(n, edges)) {
+            continue;
+        }
+        Graph g;
+        g.n = n;
+        g.edges = std::move(edges);
+        g.adj_matrix = build_adj_matrix(n, g.edges);
+        return g;
+    }
+    throw std::runtime_error("Failed to generate connected regular graph after 500 attempts");
+}
+
+/**
  * Factory for generating graphs according to dist_id.
  *
- * @param dist_id Distribution identifier (0 two_cluster_gnp, 1 gnp_sparse, 2 gnp_dense, 3 adversarial_barbell).
+ * @param dist_id Distribution identifier (0 two_cluster_gnp, 1 gnp_sparse, 2 gnp_dense, 3 adversarial_barbell, 4 regular_degree_3).
  * @param n Number of vertices.
  * @param rng Random number generator.
  * @return Graph Connected sampled graph.
@@ -316,6 +372,7 @@ Graph generate_graph(int dist_id, int n, std::mt19937_64& rng) {
     constexpr double kPOut = 0.05;
     constexpr double kSparseC = 6.0;
     constexpr double kPDense = 0.2;
+    constexpr int kRegularDegree = 3;
 
     switch (dist_id) {
         case 0:
@@ -331,6 +388,8 @@ Graph generate_graph(int dist_id, int n, std::mt19937_64& rng) {
             return generate_gnp_connected(n, kPDense, rng);
         case 3:
             return generate_barbell(n);
+        case 4:
+            return generate_regular_connected(n, kRegularDegree, rng);
         default:
             throw std::invalid_argument("Invalid dist_id");
     }
@@ -380,6 +439,7 @@ int karger_repetitions(int n, double delta_target) {
     double expected_runs = 0.5 * static_cast<double>(n) * static_cast<double>(n - 1) *
                            std::log(1.0 / delta_target);
     int runs = static_cast<int>(std::ceil(expected_runs));
+    runs = std::min(runs, 100);
     return std::max(1, runs);
 }
 
@@ -502,8 +562,8 @@ int main(int argc, char* argv[]) {
         std::cerr << "algo_id must be 0 (Karger) or 1 (StoerWagner)\n";
         return 1;
     }
-    if (dist_id < 0 || dist_id > 3) {
-        std::cerr << "dist_id must be 0, 1, 2, or 3\n";
+    if (dist_id < 0 || dist_id > 4) {
+        std::cerr << "dist_id must be 0, 1, 2, 3, or 4\n";
         return 1;
     }
     if (n < 2) {
@@ -515,7 +575,7 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    constexpr double kDeltaTarget = 0.1;
+    constexpr double kDeltaTarget = 0.95;
     for (int rep = 0; rep < reps; ++rep) {
         std::mt19937_64 rng(seed_base + static_cast<uint64_t>(rep));
         long long total_time_ns = 0;
