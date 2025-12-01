@@ -9,6 +9,10 @@
 \usepackage{microtype}
 \usepackage{float}
 \usepackage{amsthm}
+\usepackage{titling}
+
+\pretitle{\begin{center}\bfseries\LARGE}
+\posttitle{\end{center}}
 
 \newtheorem{theorem}{Theorem}
 \newtheorem{lemma}{Lemma}
@@ -17,7 +21,8 @@
 \setlist{noitemsep}
 \graphicspath{{../results/plots/}}
 
-\title{Miller--Rabin Primality Testing: Analysis and Benchmarks}
+\title{Miller--Rabin Primality Testing}
+\author{Analysis and Benchmark Report}
 \begin{document}
 \date{}
 \maketitle
