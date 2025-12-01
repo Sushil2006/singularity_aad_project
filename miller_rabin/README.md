@@ -65,10 +65,9 @@ Notes:
 Run the binaries from separate `server/` and `client/` folders so file transfers stay organized:
 ```
 mkdir -p server client
-cp rsa_demo server/ && cp rsa_demo client/
-cd server && ./rsa_demo server 9000        # in one terminal
+cd server && ../rsa_demo server 9000        # in one terminal
 # in another terminal
-cd client && ./rsa_demo client 127.0.0.1 9000
+cd client && ../rsa_demo client 127.0.0.1 9000
 ```
 
 - Put any files you want to send inside the `client/` directory. From the client prompt, use:
