@@ -1,0 +1,154 @@
+\relax 
+\providecommand\hyper@newdestlabel[2]{}
+\providecommand\HyField@AuxAddToFields[1]{}
+\providecommand\HyField@AuxAddToCoFields[2]{}
+\@writefile{toc}{\contentsline {section}{\numberline {1}Overview}{5}{section.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {2}Methods to Compare}{5}{section.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.1}Baselines}{5}{subsection.2.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Approximate / Structured Methods}{5}{subsection.2.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {3}Practical Datasets / Workloads}{6}{section.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Neural Network Layers (Heavy-Tailed / Approximate Low-Rank)}{6}{subsection.3.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Recommender Systems (Sparse / Latent Factors)}{6}{subsection.3.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}Dense Gaussian Benchmark (Unstructured / Full Rank)}{7}{subsection.3.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {4}Unified Experimental Protocol}{7}{section.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Matrix Sizes}{7}{subsection.4.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Key Metrics}{7}{subsection.4.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Parameter Sweeps}{7}{subsection.4.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {5}Joint Plots \& Tables}{8}{section.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Error vs. Runtime Scatter (Per Workload)}{8}{subsection.5.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}Speedup vs. Error Frontiers}{8}{subsection.5.2}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Best Configuration under Error Budget}}{9}{table.caption.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}“Best Config under X\% Error” Summary Table}{9}{subsection.5.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.4}Scaling with Matrix Size}{9}{subsection.5.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {6}Putting It in Words (Interpretation)}{9}{section.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.1}The Limits of Exact Methods}{9}{subsection.6.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.2}The Utility of RMM (Sampling)}{9}{subsection.6.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.3}The Dominance of Low-Rank GEMM (RSVD)}{10}{subsection.6.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.4}Conclusion: Context-Aware Algorithm Selection}{10}{subsection.6.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {7}Randomized Matrix Multiplication}{10}{section.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.1}Conceptual Overview}{10}{subsection.7.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.2}The RMM Estimator}{11}{subsection.7.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.3}Correctness and Proofs}{12}{subsection.7.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.3.1}Proof of Unbiasedness}{12}{subsubsection.7.3.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.3.2}Error Bound (Variance Analysis)}{12}{subsubsection.7.3.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.3.3}Derivation of Optimal Probabilities}{13}{subsubsection.7.3.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.4}Time and Space Complexity Analysis}{13}{subsection.7.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.4.1}Exact GEMM Complexity}{13}{subsubsection.7.4.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.4.2}RMM Complexity}{14}{subsubsection.7.4.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.4.3}The Speedup Condition}{14}{subsubsection.7.4.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.5}Experimental Workflow: Matrix Families}{14}{subsection.7.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.5.1}Family 1: Dense Gaussian (The "Worst Case" Baseline)}{15}{subsubsection.7.5.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.5.2}Family 2: Low-Rank Matrices}{15}{subsubsection.7.5.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.5.3}Family 3: Sparse Matrices}{15}{subsubsection.7.5.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.5.4}Family 4: Neural-Network-Like Matrices (Heavy-Tailed)}{16}{subsubsection.7.5.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.6}Methodology: Experiments Across Structure}{16}{subsection.7.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.6.1}Experimental Constants}{16}{subsubsection.7.6.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.6.2}The Loop}{16}{subsubsection.7.6.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.6.3}Key Analysis: Error vs. Structure}{17}{subsubsection.7.6.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.7}Experimental Results}{17}{subsection.7.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.7.1}Runtime and Speedup Analysis}{17}{subsubsection.7.7.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces RMM runtime scaling versus matrix size at a fixed 5\% sampling ratio, showing widening separation from exact GEMM as $N$ grows.}}{18}{figure.caption.11}\protected@file@percent }
+\providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
+\newlabel{fig:rmm-runtime}{{1}{18}{RMM runtime scaling versus matrix size at a fixed 5\% sampling ratio, showing widening separation from exact GEMM as $N$ grows}{figure.caption.11}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.7.2}Error Convergence vs. Sample Size}{18}{subsubsection.7.7.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.7.3}Impact of Structure on Sample Complexity}{18}{subsubsection.7.7.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Relative error versus sampling ratio across matrix families (Dense Gaussian, NN-like, Low-Rank, Sparse). Structured matrices converge quickly while Gaussian data remains challenging.}}{19}{figure.caption.12}\protected@file@percent }
+\newlabel{fig:rmm-error-matrix-type}{{2}{19}{Relative error versus sampling ratio across matrix families (Dense Gaussian, NN-like, Low-Rank, Sparse). Structured matrices converge quickly while Gaussian data remains challenging}{figure.caption.12}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Effect of sparsity on RMM error curves: higher sparsity reduces the sampling budget needed to reach comparable accuracy.}}{19}{figure.caption.13}\protected@file@percent }
+\newlabel{fig:rmm-sparsity}{{3}{19}{Effect of sparsity on RMM error curves: higher sparsity reduces the sampling budget needed to reach comparable accuracy}{figure.caption.13}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.8}Observations on Figures}{19}{subsection.7.8}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.8.1}Variance Reduction via Importance Sampling}{20}{subsubsection.7.8.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.8.2}The Low-Rank Phase Transition}{20}{subsubsection.7.8.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.8.3}Performance on Sparse Data}{20}{subsubsection.7.8.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.9}Why and Where RMM Works in Practice}{20}{subsection.7.9}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.10}Real-World Use Cases}{21}{subsection.7.10}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.11}Conclusion}{21}{subsection.7.11}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {8}Randomized SVD (RSVD)}{21}{section.8}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.1}Conceptual Overview}{21}{subsection.8.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.2}Algorithm Description}{22}{subsection.8.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.3}Theoretical Analysis and Proofs}{23}{subsection.8.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {8.3.1}The Objective}{23}{subsubsection.8.3.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {8.3.2}Partitioning the Spectrum}{24}{subsubsection.8.3.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {8.3.3}Projection Analysis}{24}{subsubsection.8.3.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {8.3.4}The Deterministic Error Bound}{24}{subsubsection.8.3.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {8.3.5}Probabilistic Average-Case Bound}{24}{subsubsection.8.3.5}\protected@file@percent }
+\newlabel{th:avg_spec_err}{{8.1}{24}{Average Spectral Error}{tcb@cnt@theorem.8.1}{}}
+\newlabel{th:avg_frob_err}{{8.2}{25}{Average Frobenius Error}{tcb@cnt@theorem.8.2}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {8.3.6}The Role of Power Iterations}{25}{subsubsection.8.3.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.4}Complexity Analysis}{25}{subsection.8.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {8.4.1}Step-by-Step Cost Breakdown}{25}{subsubsection.8.4.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {8.4.2}Total Complexity Comparison}{26}{subsubsection.8.4.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {8.4.3}Complexity with Power Iterations}{26}{subsubsection.8.4.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.5}Experimental Results}{26}{subsection.8.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.6}Approximation Quality and Error Intuition}{26}{subsection.8.6}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces RSVD relative error versus target rank. Gaussian matrices remain hard to compress, while low-rank and NN-like data reach machine-precision error once $k$ exceeds the intrinsic rank.}}{27}{figure.caption.22}\protected@file@percent }
+\newlabel{fig:rsvd-error-rank}{{4}{27}{RSVD relative error versus target rank. Gaussian matrices remain hard to compress, while low-rank and NN-like data reach machine-precision error once $k$ exceeds the intrinsic rank}{figure.caption.22}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {8.6.1}The Baseline: Eckart-Young-Mirsky Theorem}{27}{subsubsection.8.6.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {8.6.2}Interpretation of Oversampling ($p$)}{27}{subsubsection.8.6.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Error-runtime trade-off for RSVD across workloads. Power iterations shift points left (lower error) with modest runtime overhead, defining a clear Pareto frontier.}}{28}{figure.caption.23}\protected@file@percent }
+\newlabel{fig:rsvd-error-runtime}{{5}{28}{Error-runtime trade-off for RSVD across workloads. Power iterations shift points left (lower error) with modest runtime overhead, defining a clear Pareto frontier}{figure.caption.23}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {8.6.3}Intuition for Power Iterations ($q$)}{28}{subsubsection.8.6.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.7}Implementation Details (Python)}{28}{subsection.8.7}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces RSVD runtime scaling with matrix size at fixed rank $k=64$: growth is near-linear in $N$, yielding larger speedups over deterministic SVD as $N$ increases.}}{29}{figure.caption.24}\protected@file@percent }
+\newlabel{fig:rsvd-runtime-size}{{6}{29}{RSVD runtime scaling with matrix size at fixed rank $k=64$: growth is near-linear in $N$, yielding larger speedups over deterministic SVD as $N$ increases}{figure.caption.24}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {8.7.1}Key Design Choices}{29}{subsubsection.8.7.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {8.7.2}Python Implementation Code}{29}{subsubsection.8.7.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {8.7.3}Memory Management Note}{31}{subsubsection.8.7.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.8}Experimental Workflow for RSVD}{31}{subsection.8.8}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {8.8.1}Dataset Generation (Matrix Families)}{32}{subsubsection.8.8.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {8.8.2}Metrics for Evaluation}{32}{subsubsection.8.8.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {8.8.3}Experimental Procedure}{33}{subsubsection.8.8.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.9}Practical Applications of RSVD}{33}{subsection.8.9}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {8.9.1}Dimensionality Reduction (PCA)}{33}{subsubsection.8.9.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {8.9.2}Image Compression and Denoising}{34}{subsubsection.8.9.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {8.9.3}Latent Semantic Analysis (LSA) in NLP}{34}{subsubsection.8.9.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {8.9.4}Pre-processing for Matrix Multiplication}{34}{subsubsection.8.9.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.10}Conclusion}{34}{subsection.8.10}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {8.10.1}Summary of Key Findings}{34}{subsubsection.8.10.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {9}Two-Sided Randomized Low-Rank GEMM}{35}{section.9}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {9.1}Conceptual Overview}{35}{subsection.9.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {9.2}Low-Rank Factorizations via RSVD}{35}{subsection.9.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {9.3}Two-Sided Low-Rank GEMM Algorithm}{36}{subsection.9.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.3.1}Derivation of the Coupling Matrix}{36}{subsubsection.9.3.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.3.2}Algorithmic Steps}{37}{subsubsection.9.3.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.3.3}Total Complexity Analysis}{38}{subsubsection.9.3.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {9.4}Approximation Intuition and Error Bounds}{38}{subsection.9.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {9.5}Time and Space Complexity Analysis}{39}{subsection.9.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.5.1}Space Complexity}{39}{subsubsection.9.5.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.5.2}Time Complexity}{40}{subsubsection.9.5.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.5.3}Speedup Factor}{40}{subsubsection.9.5.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {9.6}Experimental Workflow}{40}{subsection.9.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.6.1}Matrix Families}{41}{subsubsection.9.6.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.6.2}Experimental Procedure}{41}{subsubsection.9.6.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.6.3}Metrics}{41}{subsubsection.9.6.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {9.7}Experimental Results}{42}{subsection.9.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.7.1}Error Convergence vs. Rank}{42}{subsubsection.9.7.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.7.2}Computational Speedup}{42}{subsubsection.9.7.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces Relative Frobenius error versus intrinsic rank for two-sided low-rank GEMM. Error collapses once the target rank matches the true spectrum, while Gaussian data remains difficult.}}{43}{figure.caption.30}\protected@file@percent }
+\newlabel{fig:lr-error-intrinsic-rank}{{7}{43}{Relative Frobenius error versus intrinsic rank for two-sided low-rank GEMM. Error collapses once the target rank matches the true spectrum, while Gaussian data remains difficult}{figure.caption.30}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.7.3}The Accuracy-Efficiency Pareto Frontier}{43}{subsubsection.9.7.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.7.4}Runtime Scaling with Matrix Size}{43}{subsubsection.9.7.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {9.8}Observations and Interpretation}{43}{subsection.9.8}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.8.1}The Role of Spectral Decay}{43}{subsubsection.9.8.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {8}{\ignorespaces Online speedup of two-sided low-rank GEMM versus target rank. Speedups peak at small $r$ and taper toward parity as $r$ grows.}}{44}{figure.caption.31}\protected@file@percent }
+\newlabel{fig:lr-speedup-rank}{{8}{44}{Online speedup of two-sided low-rank GEMM versus target rank. Speedups peak at small $r$ and taper toward parity as $r$ grows}{figure.caption.31}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.8.2}Memory Bandwidth vs. FLOPs}{44}{subsubsection.9.8.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.8.3}The "Sweet Spot" for Rank Selection}{44}{subsubsection.9.8.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {9.9}Practical Real-World Use Cases}{44}{subsection.9.9}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {9}{\ignorespaces Runtime scaling of two-sided low-rank GEMM compared to exact multiplication across matrix sizes, highlighting widening advantages as $N$ grows.}}{45}{figure.caption.32}\protected@file@percent }
+\newlabel{fig:lr-runtime-size}{{9}{45}{Runtime scaling of two-sided low-rank GEMM compared to exact multiplication across matrix sizes, highlighting widening advantages as $N$ grows}{figure.caption.32}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.9.1}Deep Learning Inference Acceleration (LoRA)}{45}{subsubsection.9.9.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.9.2}Recommender Systems}{45}{subsubsection.9.9.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.9.3}Scientific Computing: Kernel Methods}{46}{subsubsection.9.9.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {9.9.4}Privacy-Preserving Computing}{46}{subsubsection.9.9.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {9.10}Conclusion (Two-Sided GEMM)}{46}{subsection.9.10}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {10}Overall Comparison and Scaling}{46}{section.10}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {10}{\ignorespaces Per-workload comparison of baseline GEMM, Strassen, RMM, RSVD, and two-sided low-rank GEMM. Low-rank methods dominate NN-like and recommender workloads, while RMM excels on sparse data.}}{47}{figure.caption.33}\protected@file@percent }
+\newlabel{fig:overall-workload-bars}{{10}{47}{Per-workload comparison of baseline GEMM, Strassen, RMM, RSVD, and two-sided low-rank GEMM. Low-rank methods dominate NN-like and recommender workloads, while RMM excels on sparse data}{figure.caption.33}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {11}{\ignorespaces Heatmap of winning methods under different error budgets across workloads. Structured data favors low-rank approaches; dense Gaussian favors exact methods.}}{48}{figure.caption.34}\protected@file@percent }
+\newlabel{fig:overall-heatmap}{{11}{48}{Heatmap of winning methods under different error budgets across workloads. Structured data favors low-rank approaches; dense Gaussian favors exact methods}{figure.caption.34}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {12}{\ignorespaces Speedup-versus-error scatter across all methods and workloads. Pareto-efficient configurations cluster in the lower-right, with RSVD/LR-GEMM providing the best accuracy-speed balance for structured matrices.}}{49}{figure.caption.35}\protected@file@percent }
+\newlabel{fig:overall-scatter}{{12}{49}{Speedup-versus-error scatter across all methods and workloads. Pareto-efficient configurations cluster in the lower-right, with RSVD/LR-GEMM providing the best accuracy-speed balance for structured matrices}{figure.caption.35}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {13}{\ignorespaces Scaling with matrix size: as $N$ grows, the gap between cubic exact methods and quadratic low-rank/RMM methods widens dramatically.}}{49}{figure.caption.36}\protected@file@percent }
+\newlabel{fig:overall-scaling}{{13}{49}{Scaling with matrix size: as $N$ grows, the gap between cubic exact methods and quadratic low-rank/RMM methods widens dramatically}{figure.caption.36}{}}
+\gdef \@abspage@last{49}

@@ -1,0 +1,119 @@
+\contentsline {section}{\numberline {1}Overview}{5}{section.1}%
+\contentsline {section}{\numberline {2}Methods to Compare}{5}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Baselines}{5}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Approximate / Structured Methods}{5}{subsection.2.2}%
+\contentsline {section}{\numberline {3}Practical Datasets / Workloads}{6}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Neural Network Layers (Heavy-Tailed / Approximate Low-Rank)}{6}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Recommender Systems (Sparse / Latent Factors)}{6}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Dense Gaussian Benchmark (Unstructured / Full Rank)}{7}{subsection.3.3}%
+\contentsline {section}{\numberline {4}Unified Experimental Protocol}{7}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Matrix Sizes}{7}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Key Metrics}{7}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}Parameter Sweeps}{7}{subsection.4.3}%
+\contentsline {section}{\numberline {5}Joint Plots \& Tables}{8}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Error vs. Runtime Scatter (Per Workload)}{8}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}Speedup vs. Error Frontiers}{8}{subsection.5.2}%
+\contentsline {subsection}{\numberline {5.3}“Best Config under X\% Error” Summary Table}{9}{subsection.5.3}%
+\contentsline {subsection}{\numberline {5.4}Scaling with Matrix Size}{9}{subsection.5.4}%
+\contentsline {section}{\numberline {6}Putting It in Words (Interpretation)}{9}{section.6}%
+\contentsline {subsection}{\numberline {6.1}The Limits of Exact Methods}{9}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}The Utility of RMM (Sampling)}{9}{subsection.6.2}%
+\contentsline {subsection}{\numberline {6.3}The Dominance of Low-Rank GEMM (RSVD)}{10}{subsection.6.3}%
+\contentsline {subsection}{\numberline {6.4}Conclusion: Context-Aware Algorithm Selection}{10}{subsection.6.4}%
+\contentsline {section}{\numberline {7}Randomized Matrix Multiplication}{10}{section.7}%
+\contentsline {subsection}{\numberline {7.1}Conceptual Overview}{10}{subsection.7.1}%
+\contentsline {subsection}{\numberline {7.2}The RMM Estimator}{11}{subsection.7.2}%
+\contentsline {subsection}{\numberline {7.3}Correctness and Proofs}{12}{subsection.7.3}%
+\contentsline {subsubsection}{\numberline {7.3.1}Proof of Unbiasedness}{12}{subsubsection.7.3.1}%
+\contentsline {subsubsection}{\numberline {7.3.2}Error Bound (Variance Analysis)}{12}{subsubsection.7.3.2}%
+\contentsline {subsubsection}{\numberline {7.3.3}Derivation of Optimal Probabilities}{13}{subsubsection.7.3.3}%
+\contentsline {subsection}{\numberline {7.4}Time and Space Complexity Analysis}{13}{subsection.7.4}%
+\contentsline {subsubsection}{\numberline {7.4.1}Exact GEMM Complexity}{13}{subsubsection.7.4.1}%
+\contentsline {subsubsection}{\numberline {7.4.2}RMM Complexity}{14}{subsubsection.7.4.2}%
+\contentsline {subsubsection}{\numberline {7.4.3}The Speedup Condition}{14}{subsubsection.7.4.3}%
+\contentsline {subsection}{\numberline {7.5}Experimental Workflow: Matrix Families}{14}{subsection.7.5}%
+\contentsline {subsubsection}{\numberline {7.5.1}Family 1: Dense Gaussian (The "Worst Case" Baseline)}{15}{subsubsection.7.5.1}%
+\contentsline {subsubsection}{\numberline {7.5.2}Family 2: Low-Rank Matrices}{15}{subsubsection.7.5.2}%
+\contentsline {subsubsection}{\numberline {7.5.3}Family 3: Sparse Matrices}{15}{subsubsection.7.5.3}%
+\contentsline {subsubsection}{\numberline {7.5.4}Family 4: Neural-Network-Like Matrices (Heavy-Tailed)}{16}{subsubsection.7.5.4}%
+\contentsline {subsection}{\numberline {7.6}Methodology: Experiments Across Structure}{16}{subsection.7.6}%
+\contentsline {subsubsection}{\numberline {7.6.1}Experimental Constants}{16}{subsubsection.7.6.1}%
+\contentsline {subsubsection}{\numberline {7.6.2}The Loop}{16}{subsubsection.7.6.2}%
+\contentsline {subsubsection}{\numberline {7.6.3}Key Analysis: Error vs. Structure}{17}{subsubsection.7.6.3}%
+\contentsline {subsection}{\numberline {7.7}Experimental Results}{17}{subsection.7.7}%
+\contentsline {subsubsection}{\numberline {7.7.1}Runtime and Speedup Analysis}{17}{subsubsection.7.7.1}%
+\contentsline {subsubsection}{\numberline {7.7.2}Error Convergence vs. Sample Size}{18}{subsubsection.7.7.2}%
+\contentsline {subsubsection}{\numberline {7.7.3}Impact of Structure on Sample Complexity}{18}{subsubsection.7.7.3}%
+\contentsline {subsection}{\numberline {7.8}Observations on Figures}{19}{subsection.7.8}%
+\contentsline {subsubsection}{\numberline {7.8.1}Variance Reduction via Importance Sampling}{20}{subsubsection.7.8.1}%
+\contentsline {subsubsection}{\numberline {7.8.2}The Low-Rank Phase Transition}{20}{subsubsection.7.8.2}%
+\contentsline {subsubsection}{\numberline {7.8.3}Performance on Sparse Data}{20}{subsubsection.7.8.3}%
+\contentsline {subsection}{\numberline {7.9}Why and Where RMM Works in Practice}{20}{subsection.7.9}%
+\contentsline {subsection}{\numberline {7.10}Real-World Use Cases}{21}{subsection.7.10}%
+\contentsline {subsection}{\numberline {7.11}Conclusion}{21}{subsection.7.11}%
+\contentsline {section}{\numberline {8}Randomized SVD (RSVD)}{21}{section.8}%
+\contentsline {subsection}{\numberline {8.1}Conceptual Overview}{21}{subsection.8.1}%
+\contentsline {subsection}{\numberline {8.2}Algorithm Description}{22}{subsection.8.2}%
+\contentsline {subsection}{\numberline {8.3}Theoretical Analysis and Proofs}{23}{subsection.8.3}%
+\contentsline {subsubsection}{\numberline {8.3.1}The Objective}{23}{subsubsection.8.3.1}%
+\contentsline {subsubsection}{\numberline {8.3.2}Partitioning the Spectrum}{24}{subsubsection.8.3.2}%
+\contentsline {subsubsection}{\numberline {8.3.3}Projection Analysis}{24}{subsubsection.8.3.3}%
+\contentsline {subsubsection}{\numberline {8.3.4}The Deterministic Error Bound}{24}{subsubsection.8.3.4}%
+\contentsline {subsubsection}{\numberline {8.3.5}Probabilistic Average-Case Bound}{24}{subsubsection.8.3.5}%
+\contentsline {subsubsection}{\numberline {8.3.6}The Role of Power Iterations}{25}{subsubsection.8.3.6}%
+\contentsline {subsection}{\numberline {8.4}Complexity Analysis}{25}{subsection.8.4}%
+\contentsline {subsubsection}{\numberline {8.4.1}Step-by-Step Cost Breakdown}{25}{subsubsection.8.4.1}%
+\contentsline {subsubsection}{\numberline {8.4.2}Total Complexity Comparison}{26}{subsubsection.8.4.2}%
+\contentsline {subsubsection}{\numberline {8.4.3}Complexity with Power Iterations}{26}{subsubsection.8.4.3}%
+\contentsline {subsection}{\numberline {8.5}Experimental Results}{26}{subsection.8.5}%
+\contentsline {subsection}{\numberline {8.6}Approximation Quality and Error Intuition}{26}{subsection.8.6}%
+\contentsline {subsubsection}{\numberline {8.6.1}The Baseline: Eckart-Young-Mirsky Theorem}{27}{subsubsection.8.6.1}%
+\contentsline {subsubsection}{\numberline {8.6.2}Interpretation of Oversampling ($p$)}{27}{subsubsection.8.6.2}%
+\contentsline {subsubsection}{\numberline {8.6.3}Intuition for Power Iterations ($q$)}{28}{subsubsection.8.6.3}%
+\contentsline {subsection}{\numberline {8.7}Implementation Details (Python)}{28}{subsection.8.7}%
+\contentsline {subsubsection}{\numberline {8.7.1}Key Design Choices}{29}{subsubsection.8.7.1}%
+\contentsline {subsubsection}{\numberline {8.7.2}Python Implementation Code}{29}{subsubsection.8.7.2}%
+\contentsline {subsubsection}{\numberline {8.7.3}Memory Management Note}{31}{subsubsection.8.7.3}%
+\contentsline {subsection}{\numberline {8.8}Experimental Workflow for RSVD}{31}{subsection.8.8}%
+\contentsline {subsubsection}{\numberline {8.8.1}Dataset Generation (Matrix Families)}{32}{subsubsection.8.8.1}%
+\contentsline {subsubsection}{\numberline {8.8.2}Metrics for Evaluation}{32}{subsubsection.8.8.2}%
+\contentsline {subsubsection}{\numberline {8.8.3}Experimental Procedure}{33}{subsubsection.8.8.3}%
+\contentsline {subsection}{\numberline {8.9}Practical Applications of RSVD}{33}{subsection.8.9}%
+\contentsline {subsubsection}{\numberline {8.9.1}Dimensionality Reduction (PCA)}{33}{subsubsection.8.9.1}%
+\contentsline {subsubsection}{\numberline {8.9.2}Image Compression and Denoising}{34}{subsubsection.8.9.2}%
+\contentsline {subsubsection}{\numberline {8.9.3}Latent Semantic Analysis (LSA) in NLP}{34}{subsubsection.8.9.3}%
+\contentsline {subsubsection}{\numberline {8.9.4}Pre-processing for Matrix Multiplication}{34}{subsubsection.8.9.4}%
+\contentsline {subsection}{\numberline {8.10}Conclusion}{34}{subsection.8.10}%
+\contentsline {subsubsection}{\numberline {8.10.1}Summary of Key Findings}{34}{subsubsection.8.10.1}%
+\contentsline {section}{\numberline {9}Two-Sided Randomized Low-Rank GEMM}{35}{section.9}%
+\contentsline {subsection}{\numberline {9.1}Conceptual Overview}{35}{subsection.9.1}%
+\contentsline {subsection}{\numberline {9.2}Low-Rank Factorizations via RSVD}{35}{subsection.9.2}%
+\contentsline {subsection}{\numberline {9.3}Two-Sided Low-Rank GEMM Algorithm}{36}{subsection.9.3}%
+\contentsline {subsubsection}{\numberline {9.3.1}Derivation of the Coupling Matrix}{36}{subsubsection.9.3.1}%
+\contentsline {subsubsection}{\numberline {9.3.2}Algorithmic Steps}{37}{subsubsection.9.3.2}%
+\contentsline {subsubsection}{\numberline {9.3.3}Total Complexity Analysis}{38}{subsubsection.9.3.3}%
+\contentsline {subsection}{\numberline {9.4}Approximation Intuition and Error Bounds}{38}{subsection.9.4}%
+\contentsline {subsection}{\numberline {9.5}Time and Space Complexity Analysis}{39}{subsection.9.5}%
+\contentsline {subsubsection}{\numberline {9.5.1}Space Complexity}{39}{subsubsection.9.5.1}%
+\contentsline {subsubsection}{\numberline {9.5.2}Time Complexity}{40}{subsubsection.9.5.2}%
+\contentsline {subsubsection}{\numberline {9.5.3}Speedup Factor}{40}{subsubsection.9.5.3}%
+\contentsline {subsection}{\numberline {9.6}Experimental Workflow}{40}{subsection.9.6}%
+\contentsline {subsubsection}{\numberline {9.6.1}Matrix Families}{41}{subsubsection.9.6.1}%
+\contentsline {subsubsection}{\numberline {9.6.2}Experimental Procedure}{41}{subsubsection.9.6.2}%
+\contentsline {subsubsection}{\numberline {9.6.3}Metrics}{41}{subsubsection.9.6.3}%
+\contentsline {subsection}{\numberline {9.7}Experimental Results}{42}{subsection.9.7}%
+\contentsline {subsubsection}{\numberline {9.7.1}Error Convergence vs. Rank}{42}{subsubsection.9.7.1}%
+\contentsline {subsubsection}{\numberline {9.7.2}Computational Speedup}{42}{subsubsection.9.7.2}%
+\contentsline {subsubsection}{\numberline {9.7.3}The Accuracy-Efficiency Pareto Frontier}{43}{subsubsection.9.7.3}%
+\contentsline {subsubsection}{\numberline {9.7.4}Runtime Scaling with Matrix Size}{43}{subsubsection.9.7.4}%
+\contentsline {subsection}{\numberline {9.8}Observations and Interpretation}{43}{subsection.9.8}%
+\contentsline {subsubsection}{\numberline {9.8.1}The Role of Spectral Decay}{43}{subsubsection.9.8.1}%
+\contentsline {subsubsection}{\numberline {9.8.2}Memory Bandwidth vs. FLOPs}{44}{subsubsection.9.8.2}%
+\contentsline {subsubsection}{\numberline {9.8.3}The "Sweet Spot" for Rank Selection}{44}{subsubsection.9.8.3}%
+\contentsline {subsection}{\numberline {9.9}Practical Real-World Use Cases}{44}{subsection.9.9}%
+\contentsline {subsubsection}{\numberline {9.9.1}Deep Learning Inference Acceleration (LoRA)}{45}{subsubsection.9.9.1}%
+\contentsline {subsubsection}{\numberline {9.9.2}Recommender Systems}{45}{subsubsection.9.9.2}%
+\contentsline {subsubsection}{\numberline {9.9.3}Scientific Computing: Kernel Methods}{46}{subsubsection.9.9.3}%
+\contentsline {subsubsection}{\numberline {9.9.4}Privacy-Preserving Computing}{46}{subsubsection.9.9.4}%
+\contentsline {subsection}{\numberline {9.10}Conclusion (Two-Sided GEMM)}{46}{subsection.9.10}%
+\contentsline {section}{\numberline {10}Overall Comparison and Scaling}{46}{section.10}%
